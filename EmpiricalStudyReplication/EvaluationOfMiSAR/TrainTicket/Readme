@@ -1,0 +1,6 @@
+TrainTicket is an already developed microservice system developed in the following research paper: 
+Zhou, X. Peng, T. Xie, C. J. C. Sun, J.and Xu, and W. Zhao, “Bench-
+marking microservice systems for software engineering research,” in
+Proceedings of the 40th International Conference on Software Engineering
+Companion Proceeedings - ICSE, 2018, p. 323–324
+This folder contains the semi-automatically generated MiSAR PSM and PIM models of TrainTicket.
