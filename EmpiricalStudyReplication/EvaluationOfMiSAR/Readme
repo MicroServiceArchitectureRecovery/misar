@@ -1,0 +1,1 @@
+The objective is to evaluate the MiSAR approach in terms ofrecovering architectural models of microservice systems. In this file we share the evaluation of 3 systems. We also share the excel sheet where we analysed and created metrics for the correctness and completeness of the 3 systems in comparison to their actual implemented architecture.
