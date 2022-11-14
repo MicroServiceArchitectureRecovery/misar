@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ecore:EPackage xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="PIM" nsURI="http://localhost/mdd/PIM.ecore" nsPrefix="PIM">
+  <eClassifiers xsi:type="ecore:EClass" name="RootPIM">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="architecture" lowerBound="1"
+        eType="#//MicroserviceArchitecture" containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="MicroserviceArchitecture">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="ArchitectureName" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="microservices" lowerBound="1"
+        upperBound="-1" eType="#//Microservice" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="GeneratingPSM" lowerBound="1"
+        upperBound="-1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Microservice">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="MicroserviceName" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="container" lowerBound="1"
+        eType="#//Container" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="components" upperBound="-1"
+        eType="#//InfrastructurePatternComponent" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="interface" lowerBound="1"
+        eType="#//ServiceInterface" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="dependencies" upperBound="-1"
+        eType="#//ServiceDependency" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="GeneratingPSM" lowerBound="1"
+        upperBound="-1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Ambient"/>
+  <eClassifiers xsi:type="ecore:EClass" name="Container" eSuperTypes="#//Ambient">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="ContainerName" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="GeneratingPSM" lowerBound="1"
+        upperBound="-1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="FunctionalMicroservice" eSuperTypes="#//Microservice"/>
+  <eClassifiers xsi:type="ecore:EClass" name="InfrastructureMicroservice" eSuperTypes="#//Microservice"/>
+  <eClassifiers xsi:type="ecore:EClass" name="InfrastructurePatternComponent">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="Category" eType="#//InfrastructurePatternCategory"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="Technology" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="Environment" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="GeneratingPSM" lowerBound="1"
+        upperBound="-1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="InfrastructureServerComponent" eSuperTypes="#//InfrastructurePatternComponent"/>
+  <eClassifiers xsi:type="ecore:EClass" name="InfrastructureClientComponent" eSuperTypes="#//InfrastructurePatternComponent"/>
+  <eClassifiers xsi:type="ecore:EEnum" name="InfrastructurePatternCategory">
+    <eLiterals name="Service_Routing_Pattern_API_Gateway_and_Proxy" literal="Service_Routing_Pattern_API_Gateway_and_Proxy"/>
+    <eLiterals name="Service_Routing_Pattern_Registry_and_Discovery" value="1" literal="Service_Routing_Pattern_Registry_and_Discovery"/>
+    <eLiterals name="Development_Pattern_Centralized_Configuration" value="2"/>
+    <eLiterals name="Development_Pattern_Data_Persistence" value="3"/>
+    <eLiterals name="Development_Pattern_Data_Cache" value="4"/>
+    <eLiterals name="Development_Pattern_Asynchronous_Message_Brokering" value="5"
+        literal="Development_Pattern_Asynchronous_Message_Brokering"/>
+    <eLiterals name="Client_Resiliency_Pattern_Load_Balancer" value="6" literal="Client_Resiliency_Pattern_Load_Balancer"/>
+    <eLiterals name="Client_Resiliency_Pattern_Circuit_Breaker" value="7"/>
+    <eLiterals name="Security_Pattern_Web_Security" value="8"/>
+    <eLiterals name="Security_Pattern_Authorization_and_Authentication" value="9"/>
+    <eLiterals name="Observability_Pattern_Application_Metrics_Logging" value="10"/>
+    <eLiterals name="Observability_Pattern_Application_Metrics_Generation" value="11"/>
+    <eLiterals name="Observability_Pattern_Application_Metrics_Aggregation" value="12"/>
+    <eLiterals name="Observability_Pattern_Application_Metrics_Analysis" value="13"/>
+    <eLiterals name="Observability_Pattern_Application_Metrics_Monitoring" value="14"
+        literal="Observability_Pattern_Application_Metrics_Monitoring"/>
+    <eLiterals name="Observability_Pattern_Circuit_Breaker_Metrics_Generation" value="15"/>
+    <eLiterals name="Observability_Pattern_Circuit_Breaker_Metrics_Aggregation" value="16"/>
+    <eLiterals name="Observability_Pattern_Circuit_Breaker_Metrics_Monitoring" value="17"/>
+    <eLiterals name="Observability_Pattern_Log_Correlation" value="18" literal="Observability_Pattern_Log_Correlation"/>
+    <eLiterals name="Observability_Pattern_Distributed_Tracing" value="19"/>
+    <eLiterals name="Observability_Pattern_Distributed_Tracing_and_Monitoring" value="20"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="ServiceInterface">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="ServerURL" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="destinations" lowerBound="1"
+        upperBound="-1" eType="#//MessageDestination" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="GeneratingPSM" lowerBound="1"
+        upperBound="-1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="MessageDestination">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="messages" upperBound="-1"
+        eType="#//ServiceMessage" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="Environment" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="GeneratingPSM" lowerBound="1"
+        upperBound="-1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="operation" eType="#//ServiceOperation"
+        containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Endpoint" eSuperTypes="#//MessageDestination">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="RequestURI" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="QueueListener" eSuperTypes="#//MessageDestination">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="QueueName" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="ServiceOperation">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="OperationName" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="OperationDescription" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="GeneratingPSM" lowerBound="1"
+        upperBound="-1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="ServiceMessage">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="MessageType" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="BodySchema" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="SchemaFormat" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="GeneratingPSM" lowerBound="1"
+        upperBound="-1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="ServiceDependency">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="ConsumerOperation" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="ConsumerMessage" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="isWrappedByCircuitBreaker"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="ProviderName" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="ProviderDestination" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="Environment" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="GeneratingPSM" lowerBound="1"
+        upperBound="-1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+  </eClassifiers>
+</ecore:EPackage>
