@@ -1,0 +1,453 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<PIM:RootPIM xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:PIM="http://localhost/mdd/PIM.ecore" xsi:schemaLocation="http://localhost/mdd/PIM.ecore ../source/PIM.ecore">
+  <architecture ArchitectureName="Music Store">
+    <microservices MicroserviceName="configserver">
+      <container ContainerName="configserver">
+        <GeneratingPSM>DockerContainerDefinition[ContainerName:configserver,ImageField:steeltoeoss/config-server, GeneratesLogs:false]</GeneratingPSM>
+      </container>
+      <interface ServerURL="[http|https]://configserver:&lt;port-number>">
+        <GeneratingPSM>DockerContainerDefinition[ContainerName:configserver,ImageField:steeltoeoss/config-server, GeneratesLogs:false]</GeneratingPSM>
+      </interface>
+      <GeneratingPSM>DockerContainerDefinition[ContainerName:configserver,ImageField:steeltoeoss/config-server, GeneratesLogs:false]</GeneratingPSM>
+    </microservices>
+    <microservices MicroserviceName="eurekaserver">
+      <container ContainerName="eurekaserver">
+        <GeneratingPSM>DockerContainerDefinition[ContainerName:eurekaserver,ImageField:steeltoeoss/eurekaserver, GeneratesLogs:false]</GeneratingPSM>
+      </container>
+      <interface ServerURL="[http|https]://eurekaserver:&lt;port-number>">
+        <GeneratingPSM>DockerContainerDefinition[ContainerName:eurekaserver,ImageField:steeltoeoss/eurekaserver, GeneratesLogs:false]</GeneratingPSM>
+      </interface>
+      <GeneratingPSM>DockerContainerDefinition[ContainerName:eurekaserver,ImageField:steeltoeoss/eurekaserver, GeneratesLogs:false]</GeneratingPSM>
+    </microservices>
+    <microservices MicroserviceName="spring-boot-admin">
+      <container ContainerName="spring-boot-admin">
+        <GeneratingPSM>DockerContainerDefinition[ContainerName:spring-boot-admin,ImageField:hananiel/spring-boot-admin-eureka-sample, GeneratesLogs:false]</GeneratingPSM>
+      </container>
+      <interface ServerURL="[http|https]://spring-boot-admin:&lt;port-number>">
+        <GeneratingPSM>DockerContainerDefinition[ContainerName:spring-boot-admin,ImageField:hananiel/spring-boot-admin-eureka-sample, GeneratesLogs:false]</GeneratingPSM>
+      </interface>
+      <dependencies ProviderName="eurekaserver">
+        <GeneratingPSM>DockerContainerDefinition[ContainerName:spring-boot-admin,ImageField:hananiel/spring-boot-admin-eureka-sample, GeneratesLogs:false]</GeneratingPSM>
+        <GeneratingPSM>DockerContainerLink[LinksDependsOnField:eurekaserver]</GeneratingPSM>
+      </dependencies>
+      <GeneratingPSM>DockerContainerDefinition[ContainerName:spring-boot-admin,ImageField:hananiel/spring-boot-admin-eureka-sample, GeneratesLogs:false]</GeneratingPSM>
+    </microservices>
+    <microservices xsi:type="PIM:InfrastructureMicroservice" MicroserviceName="mysql">
+      <container ContainerName="mysql">
+        <GeneratingPSM>DockerContainerDefinition[ContainerName:mysql,ImageField:mysql:5.7, GeneratesLogs:false]</GeneratingPSM>
+      </container>
+      <components xsi:type="PIM:InfrastructureServerComponent" Category="Development_Pattern_Data_Persistence" Technology="MySQL">
+        <GeneratingPSM>DockerContainerDefinition[ContainerName:mysql,ImageField:mysql:5.7, GeneratesLogs:false]</GeneratingPSM>
+      </components>
+      <interface ServerURL="[http|https]://mysql:&lt;port-number>">
+        <GeneratingPSM>DockerContainerDefinition[ContainerName:mysql,ImageField:mysql:5.7, GeneratesLogs:false]</GeneratingPSM>
+      </interface>
+      <dependencies ProviderName="configserver">
+        <GeneratingPSM>DockerContainerDefinition[ContainerName:mysql,ImageField:mysql:5.7, GeneratesLogs:false]</GeneratingPSM>
+        <GeneratingPSM>DockerContainerLink[LinksDependsOnField:configserver]</GeneratingPSM>
+      </dependencies>
+      <dependencies ProviderName="eurekaserver">
+        <GeneratingPSM>DockerContainerDefinition[ContainerName:mysql,ImageField:mysql:5.7, GeneratesLogs:false]</GeneratingPSM>
+        <GeneratingPSM>DockerContainerLink[LinksDependsOnField:eurekaserver]</GeneratingPSM>
+      </dependencies>
+      <GeneratingPSM>DockerContainerDefinition[ContainerName:mysql,ImageField:mysql:5.7, GeneratesLogs:false]</GeneratingPSM>
+    </microservices>
+    <microservices xsi:type="PIM:InfrastructureMicroservice" MicroserviceName="zipkinserver">
+      <container ContainerName="zipkinserver">
+        <GeneratingPSM>DockerContainerDefinition[ContainerName:zipkinserver,ImageField:steeltoeoss/zipkin, GeneratesLogs:false]</GeneratingPSM>
+      </container>
+      <components xsi:type="PIM:InfrastructureServerComponent" Category="Observability_Pattern_Distributed_Tracing_and_Monitoring" Technology="Zipkin">
+        <GeneratingPSM>DockerContainerDefinition[ContainerName:zipkinserver,ImageField:steeltoeoss/zipkin, GeneratesLogs:false]</GeneratingPSM>
+      </components>
+      <interface ServerURL="[http|https]://zipkinserver:&lt;port-number>">
+        <destinations xsi:type="PIM:Endpoint" RequestURI="GET /api/v2/spans">
+          <messages MessageType="RESPONSE" BodySchema="{&quot;type&quot;:&quot;array&quot;,&quot;items&quot;:{&quot;type&quot;:&quot;object&quot;,&quot;properties&quot;:{&quot;id&quot;:{&quot;type&quot;:&quot;string&quot;},&quot;traceId&quot;:{&quot;type&quot;:&quot;string&quot;},&quot;parentId&quot;:{&quot;type&quot;:&quot;string&quot;},&quot;name&quot;:{&quot;type&quot;:&quot;string&quot;},&quot;timestamp&quot;:{&quot;type&quot;:&quot;integer&quot;},&quot;duration&quot;:{&quot;type&quot;:&quot;integer&quot;},&quot;kind&quot;:{&quot;type&quot;:&quot;string&quot;},&quot;localEndpoint&quot;:{&quot;type&quot;:&quot;object&quot;,&quot;properties&quot;:{&quot;serviceName&quot;:{&quot;type&quot;:&quot;string&quot;},&quot;ipv4&quot;:{&quot;type&quot;:&quot;string&quot;},&quot;port&quot;:{&quot;type&quot;:&quot;integer&quot;}}},&quot;remoteEndpoint&quot;:{&quot;type&quot;:&quot;object&quot;,&quot;properties&quot;:{&quot;serviceName&quot;:{&quot;type&quot;:&quot;string&quot;},&quot;ipv4&quot;:{&quot;type&quot;:&quot;string&quot;},&quot;port&quot;:{&quot;type&quot;:&quot;integer&quot;}}},&quot;tags&quot;:{&quot;type&quot;:&quot;object&quot;,&quot;properties&quot;:{&quot;http.method&quot;:{&quot;type&quot;:&quot;string&quot;},&quot;http.path&quot;:{&quot;type&quot;:&quot;string&quot;}}}}}}" SchemaFormat="JSON">
+            <GeneratingPSM>DockerContainerDefinition[ContainerName:zipkinserver,ImageField:steeltoeoss/zipkin, GeneratesLogs:false]</GeneratingPSM>
+          </messages>
+          <GeneratingPSM>DockerContainerDefinition[ContainerName:zipkinserver,ImageField:steeltoeoss/zipkin, GeneratesLogs:false]</GeneratingPSM>
+        </destinations>
+        <destinations xsi:type="PIM:Endpoint" RequestURI="POST /api/v2/spans">
+          <messages MessageType="REQUEST" BodySchema="{&quot;type&quot;:&quot;array&quot;,&quot;items&quot;:{&quot;type&quot;:&quot;object&quot;,&quot;properties&quot;:{&quot;id&quot;:{&quot;type&quot;:&quot;string&quot;},&quot;traceId&quot;:{&quot;type&quot;:&quot;string&quot;},&quot;parentId&quot;:{&quot;type&quot;:&quot;string&quot;},&quot;name&quot;:{&quot;type&quot;:&quot;string&quot;},&quot;timestamp&quot;:{&quot;type&quot;:&quot;integer&quot;},&quot;duration&quot;:{&quot;type&quot;:&quot;integer&quot;},&quot;kind&quot;:{&quot;type&quot;:&quot;string&quot;},&quot;localEndpoint&quot;:{&quot;type&quot;:&quot;object&quot;,&quot;properties&quot;:{&quot;serviceName&quot;:{&quot;type&quot;:&quot;string&quot;},&quot;ipv4&quot;:{&quot;type&quot;:&quot;string&quot;},&quot;port&quot;:{&quot;type&quot;:&quot;integer&quot;}}},&quot;remoteEndpoint&quot;:{&quot;type&quot;:&quot;object&quot;,&quot;properties&quot;:{&quot;serviceName&quot;:{&quot;type&quot;:&quot;string&quot;},&quot;ipv4&quot;:{&quot;type&quot;:&quot;string&quot;},&quot;port&quot;:{&quot;type&quot;:&quot;integer&quot;}}},&quot;tags&quot;:{&quot;type&quot;:&quot;object&quot;,&quot;properties&quot;:{&quot;http.method&quot;:{&quot;type&quot;:&quot;string&quot;},&quot;http.path&quot;:{&quot;type&quot;:&quot;string&quot;}}}}}}" SchemaFormat="JSON">
+            <GeneratingPSM>DockerContainerDefinition[ContainerName:zipkinserver,ImageField:steeltoeoss/zipkin, GeneratesLogs:false]</GeneratingPSM>
+          </messages>
+          <messages MessageType="RESPONSE" BodySchema="{&quot;type&quot;:&quot;string&quot;}" SchemaFormat="JSON">
+            <GeneratingPSM>DockerContainerDefinition[ContainerName:zipkinserver,ImageField:steeltoeoss/zipkin, GeneratesLogs:false]</GeneratingPSM>
+          </messages>
+          <GeneratingPSM>DockerContainerDefinition[ContainerName:zipkinserver,ImageField:steeltoeoss/zipkin, GeneratesLogs:false]</GeneratingPSM>
+        </destinations>
+        <GeneratingPSM>DockerContainerDefinition[ContainerName:zipkinserver,ImageField:steeltoeoss/zipkin, GeneratesLogs:false]</GeneratingPSM>
+      </interface>
+      <GeneratingPSM>DockerContainerDefinition[ContainerName:zipkinserver,ImageField:steeltoeoss/zipkin, GeneratesLogs:false]</GeneratingPSM>
+    </microservices>
+    <microservices MicroserviceName="musicservice">
+      <container ContainerName="musicservice">
+        <GeneratingPSM>DockerContainerDefinition[ContainerName:musicservice,ImageField:base AS final, GeneratesLogs:false]</GeneratingPSM>
+        <GeneratingPSM>MicroserviceProject[ProjectArtifactId:musicservice]</GeneratingPSM>
+      </container>
+      <components xsi:type="PIM:InfrastructureClientComponent" Category="Development_Pattern_Data_Persistence" Technology="MySQL" Environment="COMPILE">
+        <GeneratingPSM>ConfigurationProperty[FullyQualifiedPropertyName:mysql.client.username]</GeneratingPSM>
+        <GeneratingPSM>ConfigurationProperty[FullyQualifiedPropertyName:mysql.client.password]</GeneratingPSM>
+        <GeneratingPSM>ConfigurationProperty[FullyQualifiedPropertyName:mysql.client.server]</GeneratingPSM>
+      </components>
+      <components Category="Observability_Pattern_Application_Metrics_Generation" Technology="Actuator" Environment="COMPILE">
+        <GeneratingPSM>ConfigurationProperty[FullyQualifiedPropertyName:management.endpoints.actuator.exposure.include]</GeneratingPSM>
+      </components>
+      <components xsi:type="PIM:InfrastructureClientComponent" Category="Observability_Pattern_Distributed_Tracing_and_Monitoring" Technology="Zipkin" Environment="COMPILE">
+        <GeneratingPSM>ConfigurationProperty[FullyQualifiedPropertyName:management.tracing.alwaysSample]</GeneratingPSM>
+        <GeneratingPSM>ConfigurationProperty[FullyQualifiedPropertyName:management.tracing.useShortTraceIds]</GeneratingPSM>
+        <GeneratingPSM>ConfigurationProperty[FullyQualifiedPropertyName:management.tracing.exporterEndpoint]</GeneratingPSM>
+        <GeneratingPSM>ConfigurationProperty[FullyQualifiedPropertyName:management.tracing.exporter.zipkin.endpoint]</GeneratingPSM>
+      </components>
+      <components xsi:type="PIM:InfrastructureClientComponent" Category="Service_Routing_Pattern_Registry_and_Discovery" Technology="Eureka" Environment="DOCKER">
+        <GeneratingPSM>ConfigurationProperty[FullyQualifiedPropertyName:eureka.client.serviceUrl]</GeneratingPSM>
+      </components>
+      <components Category="Client_Resiliency_Pattern_Load_Balancer" Technology="Ribbon" Environment="DOCKER">
+        <GeneratingPSM>ConfigurationProperty[FullyQualifiedPropertyName:eureka.client.serviceUrl]</GeneratingPSM>
+      </components>
+      <components xsi:type="PIM:InfrastructureClientComponent" Category="Development_Pattern_Data_Cache" Technology="Redis" Environment="DOCKER">
+        <GeneratingPSM>ConfigurationProperty[FullyQualifiedPropertyName:redis.client.host]</GeneratingPSM>
+      </components>
+      <interface ServerURL="[http|https]://musicservice:&lt;port-number>">
+        <destinations xsi:type="PIM:Endpoint" Environment="COMPILE" RequestURI="GET /actuator/env">
+          <GeneratingPSM>ConfigurationProperty[FullyQualifiedPropertyName:management.endpoints.actuator.exposure.include]</GeneratingPSM>
+        </destinations>
+        <destinations xsi:type="PIM:Endpoint" Environment="COMPILE" RequestURI="GET /actuator/logfile">
+          <GeneratingPSM>ConfigurationProperty[FullyQualifiedPropertyName:management.endpoints.actuator.exposure.include]</GeneratingPSM>
+        </destinations>
+        <destinations xsi:type="PIM:Endpoint" Environment="COMPILE" RequestURI="GET /actuator/health">
+          <messages MessageType="RESPONSE" BodySchema="{&quot;type&quot;:&quot;object&quot;,&quot;properties&quot;:{&quot;status&quot;:{&quot;type&quot;:&quot;string&quot;},&quot;details&quot;:{&quot;type&quot;:&quot;object&quot;}}}" SchemaFormat="JSON">
+            <GeneratingPSM>ConfigurationProperty[FullyQualifiedPropertyName:management.endpoints.actuator.exposure.include]</GeneratingPSM>
+          </messages>
+          <GeneratingPSM>ConfigurationProperty[FullyQualifiedPropertyName:management.endpoints.actuator.exposure.include]</GeneratingPSM>
+        </destinations>
+        <destinations xsi:type="PIM:Endpoint" Environment="COMPILE" RequestURI="GET /actuator/info">
+          <messages MessageType="RESPONSE" BodySchema="{&quot;type&quot;:&quot;object&quot;,&quot;properties&quot;:{&quot;git&quot;:{&quot;type&quot;:&quot;object&quot;,&quot;properties&quot;:{&quot;branch&quot;:{&quot;type&quot;:&quot;string&quot;},&quot;commit&quot;:{&quot;type&quot;:&quot;type&quot;:&quot;object&quot;,&quot;properties&quot;:{&quot;time&quot;:{&quot;type&quot;:&quot;object&quot;},&quot;id&quot;:{&quot;type&quot;:&quot;string&quot;}}}}},&quot;build&quot;:{&quot;type&quot;:&quot;object&quot;,&quot;properties&quot;:{&quot;artifact&quot;:{&quot;type&quot;:&quot;string&quot;},&quot;group&quot;:{&quot;type&quot;:&quot;string&quot;},&quot;name&quot;:{&quot;type&quot;:&quot;string&quot;},&quot;version&quot;:{&quot;type&quot;:&quot;string&quot;},&quot;time&quot;:{&quot;type&quot;:&quot;object&quot;}}}}}" SchemaFormat="JSON">
+            <GeneratingPSM>ConfigurationProperty[FullyQualifiedPropertyName:management.endpoints.actuator.exposure.include]</GeneratingPSM>
+          </messages>
+          <GeneratingPSM>ConfigurationProperty[FullyQualifiedPropertyName:management.endpoints.actuator.exposure.include]</GeneratingPSM>
+        </destinations>
+        <destinations xsi:type="PIM:Endpoint" Environment="COMPILE" RequestURI="GET /actuator/metrics">
+          <messages MessageType="RESPONSE" BodySchema="{&quot;type&quot;:&quot;object&quot;,&quot;properties&quot;:{&quot;Datacenter&quot;:{&quot;type&quot;:&quot;string&quot;},&quot;ID&quot;:{&quot;type&quot;:&quot;string&quot;},&quot;Node&quot;:{&quot;type&quot;:&quot;string&quot;},&quot;Address&quot;:{&quot;type&quot;:&quot;string&quot;},&quot;TaggedAddresses&quot;:{&quot;type&quot;:&quot;object&quot;,&quot;properties&quot;:{&quot;lan&quot;:{&quot;type&quot;:&quot;string&quot;},&quot;wan&quot;:{&quot;type&quot;:&quot;string&quot;}}},&quot;NodeMeta&quot;:{&quot;type&quot;:&quot;object&quot;,&quot;properties&quot;:{&quot;somekey&quot;:{&quot;type&quot;:&quot;string&quot;}}},&quot;Service&quot;:{&quot;type&quot;:&quot;object&quot;,&quot;properties&quot;:{&quot;ID&quot;:{&quot;type&quot;:&quot;string&quot;},&quot;Service&quot;:{&quot;type&quot;:&quot;string&quot;},&quot;Tags&quot;:{&quot;type&quot;:&quot;array&quot;,&quot;items&quot;:{&quot;type&quot;:&quot;string&quot;}},&quot;Address&quot;:{&quot;type&quot;:&quot;string&quot;},&quot;TaggedAddresses&quot;:{&quot;type&quot;:&quot;object&quot;,&quot;properties&quot;:{&quot;lan&quot;:{&quot;type&quot;:&quot;object&quot;,&quot;properties&quot;:{&quot;address&quot;:{&quot;type&quot;:&quot;string&quot;},&quot;port&quot;:{&quot;type&quot;:&quot;integer&quot;}}},&quot;wan&quot;:{&quot;type&quot;:&quot;object&quot;,&quot;properties&quot;:{&quot;address&quot;:{&quot;type&quot;:&quot;string&quot;},&quot;port&quot;:{&quot;type&quot;:&quot;integer&quot;}}}}},&quot;Meta&quot;:{&quot;type&quot;:&quot;object&quot;},&quot;Port&quot;:{&quot;type&quot;:&quot;integer&quot;}}},&quot;Check&quot;:{&quot;type&quot;:&quot;object&quot;},&quot;SkipNodeUpdate&quot;:{&quot;type&quot;:&quot;boolean&quot;}}}" SchemaFormat="JSON">
+            <GeneratingPSM>ConfigurationProperty[FullyQualifiedPropertyName:management.endpoints.actuator.exposure.include]</GeneratingPSM>
+          </messages>
+          <GeneratingPSM>ConfigurationProperty[FullyQualifiedPropertyName:management.endpoints.actuator.exposure.include]</GeneratingPSM>
+        </destinations>
+        <destinations xsi:type="PIM:Endpoint" Environment="COMPILE" RequestURI="POST /actuator/shutdown">
+          <messages MessageType="RESPONSE" BodySchema="{&quot;type&quot;:&quot;object&quot;,&quot;properties&quot;:{&quot;message&quot;:{&quot;type&quot;:&quot;string&quot;}}}" SchemaFormat="JSON">
+            <GeneratingPSM>ConfigurationProperty[FullyQualifiedPropertyName:management.endpoints.actuator.exposure.include]</GeneratingPSM>
+          </messages>
+          <GeneratingPSM>ConfigurationProperty[FullyQualifiedPropertyName:management.endpoints.actuator.exposure.include]</GeneratingPSM>
+        </destinations>
+        <GeneratingPSM>DockerContainerDefinition[ContainerName:musicservice,ImageField:base AS final, GeneratesLogs:false]</GeneratingPSM>
+        <GeneratingPSM>MicroserviceProject[ProjectArtifactId:musicservice]</GeneratingPSM>
+      </interface>
+      <dependencies ProviderName="configserver">
+        <GeneratingPSM>DockerContainerDefinition[ContainerName:musicservice,ImageField:base AS final, GeneratesLogs:false]</GeneratingPSM>
+        <GeneratingPSM>DockerContainerLink[LinksDependsOnField:configserver]</GeneratingPSM>
+      </dependencies>
+      <dependencies ProviderName="eurekaserver" ProviderDestination="Endpoint[RequestURI:POST /eureka/v2/apps/musicservice]" Environment="DOCKER">
+        <GeneratingPSM>DockerContainerDefinition[ContainerName:musicservice,ImageField:base AS final, GeneratesLogs:false]</GeneratingPSM>
+        <GeneratingPSM>DockerContainerLink[LinksDependsOnField:eurekaserver]</GeneratingPSM>
+        <GeneratingPSM>ConfigurationProperty[FullyQualifiedPropertyName:eureka.client.serviceUrl]</GeneratingPSM>
+      </dependencies>
+      <dependencies ProviderName="mysql" ProviderDestination="" Environment="DOCKER">
+        <GeneratingPSM>DockerContainerDefinition[ContainerName:musicservice,ImageField:base AS final, GeneratesLogs:false]</GeneratingPSM>
+        <GeneratingPSM>DockerContainerLink[LinksDependsOnField:mysql]</GeneratingPSM>
+        <GeneratingPSM>ConfigurationProperty[FullyQualifiedPropertyName:mysql.client.server]</GeneratingPSM>
+      </dependencies>
+      <dependencies ProviderName="zipkinserver" ProviderDestination="Endpoint[RequestURI:POST /api/v2/spans]" Environment="DOCKER">
+        <GeneratingPSM>ConfigurationProperty[FullyQualifiedPropertyName:management.tracing.exporterEndpoint]</GeneratingPSM>
+        <GeneratingPSM>ConfigurationProperty[FullyQualifiedPropertyName:management.tracing.exporter.zipkin.endpoint]</GeneratingPSM>
+      </dependencies>
+      <dependencies ProviderName="redis" ProviderDestination="" Environment="DOCKER">
+        <GeneratingPSM>ConfigurationProperty[FullyQualifiedPropertyName:redis.client.host]</GeneratingPSM>
+      </dependencies>
+      <GeneratingPSM>DockerContainerDefinition[ContainerName:musicservice,ImageField:base AS final, GeneratesLogs:false]</GeneratingPSM>
+      <GeneratingPSM>MicroserviceProject[ProjectArtifactId:musicservice]</GeneratingPSM>
+    </microservices>
+    <microservices MicroserviceName="shoppingcartservice">
+      <container ContainerName="shoppingcartservice">
+        <GeneratingPSM>DockerContainerDefinition[ContainerName:shoppingcartservice,ImageField:base AS final, GeneratesLogs:false]</GeneratingPSM>
+        <GeneratingPSM>MicroserviceProject[ProjectArtifactId:shoppingcartservice]</GeneratingPSM>
+      </container>
+      <components xsi:type="PIM:InfrastructureClientComponent" Category="Development_Pattern_Data_Persistence" Technology="MySQL" Environment="COMPILE">
+        <GeneratingPSM>ConfigurationProperty[FullyQualifiedPropertyName:mysql.client.username]</GeneratingPSM>
+        <GeneratingPSM>ConfigurationProperty[FullyQualifiedPropertyName:mysql.client.password]</GeneratingPSM>
+        <GeneratingPSM>ConfigurationProperty[FullyQualifiedPropertyName:mysql.client.server]</GeneratingPSM>
+        <GeneratingPSM>ConfigurationProperty[FullyQualifiedPropertyName:mysql.client.database]</GeneratingPSM>
+      </components>
+      <components Category="Observability_Pattern_Application_Metrics_Generation" Technology="Actuator" Environment="COMPILE">
+        <GeneratingPSM>ConfigurationProperty[FullyQualifiedPropertyName:management.endpoints.actuator.exposure.include]</GeneratingPSM>
+      </components>
+      <components xsi:type="PIM:InfrastructureClientComponent" Category="Observability_Pattern_Distributed_Tracing_and_Monitoring" Technology="Zipkin" Environment="COMPILE">
+        <GeneratingPSM>ConfigurationProperty[FullyQualifiedPropertyName:management.tracing.alwaysSample]</GeneratingPSM>
+        <GeneratingPSM>ConfigurationProperty[FullyQualifiedPropertyName:management.tracing.useShortTraceIds]</GeneratingPSM>
+        <GeneratingPSM>ConfigurationProperty[FullyQualifiedPropertyName:management.tracing.exporterEndpoint]</GeneratingPSM>
+        <GeneratingPSM>ConfigurationProperty[FullyQualifiedPropertyName:management.tracing.exporter.zipkin.endpoint]</GeneratingPSM>
+      </components>
+      <components xsi:type="PIM:InfrastructureClientComponent" Category="Service_Routing_Pattern_Registry_and_Discovery" Technology="Eureka" Environment="DOCKER">
+        <GeneratingPSM>ConfigurationProperty[FullyQualifiedPropertyName:eureka.client.serviceUrl]</GeneratingPSM>
+      </components>
+      <components Category="Client_Resiliency_Pattern_Load_Balancer" Technology="Ribbon" Environment="DOCKER">
+        <GeneratingPSM>ConfigurationProperty[FullyQualifiedPropertyName:eureka.client.serviceUrl]</GeneratingPSM>
+      </components>
+      <components xsi:type="PIM:InfrastructureClientComponent" Category="Development_Pattern_Data_Cache" Technology="Redis" Environment="DOCKER">
+        <GeneratingPSM>ConfigurationProperty[FullyQualifiedPropertyName:redis.client.host]</GeneratingPSM>
+      </components>
+      <interface ServerURL="[http|https]://shoppingcartservice:&lt;port-number>">
+        <destinations xsi:type="PIM:Endpoint" Environment="COMPILE" RequestURI="GET /actuator/env">
+          <GeneratingPSM>ConfigurationProperty[FullyQualifiedPropertyName:management.endpoints.actuator.exposure.include]</GeneratingPSM>
+        </destinations>
+        <destinations xsi:type="PIM:Endpoint" Environment="COMPILE" RequestURI="GET /actuator/logfile">
+          <GeneratingPSM>ConfigurationProperty[FullyQualifiedPropertyName:management.endpoints.actuator.exposure.include]</GeneratingPSM>
+        </destinations>
+        <destinations xsi:type="PIM:Endpoint" Environment="COMPILE" RequestURI="GET /actuator/health">
+          <messages MessageType="RESPONSE" BodySchema="{&quot;type&quot;:&quot;object&quot;,&quot;properties&quot;:{&quot;status&quot;:{&quot;type&quot;:&quot;string&quot;},&quot;details&quot;:{&quot;type&quot;:&quot;object&quot;}}}" SchemaFormat="JSON">
+            <GeneratingPSM>ConfigurationProperty[FullyQualifiedPropertyName:management.endpoints.actuator.exposure.include]</GeneratingPSM>
+          </messages>
+          <GeneratingPSM>ConfigurationProperty[FullyQualifiedPropertyName:management.endpoints.actuator.exposure.include]</GeneratingPSM>
+        </destinations>
+        <destinations xsi:type="PIM:Endpoint" Environment="COMPILE" RequestURI="GET /actuator/info">
+          <messages MessageType="RESPONSE" BodySchema="{&quot;type&quot;:&quot;object&quot;,&quot;properties&quot;:{&quot;git&quot;:{&quot;type&quot;:&quot;object&quot;,&quot;properties&quot;:{&quot;branch&quot;:{&quot;type&quot;:&quot;string&quot;},&quot;commit&quot;:{&quot;type&quot;:&quot;type&quot;:&quot;object&quot;,&quot;properties&quot;:{&quot;time&quot;:{&quot;type&quot;:&quot;object&quot;},&quot;id&quot;:{&quot;type&quot;:&quot;string&quot;}}}}},&quot;build&quot;:{&quot;type&quot;:&quot;object&quot;,&quot;properties&quot;:{&quot;artifact&quot;:{&quot;type&quot;:&quot;string&quot;},&quot;group&quot;:{&quot;type&quot;:&quot;string&quot;},&quot;name&quot;:{&quot;type&quot;:&quot;string&quot;},&quot;version&quot;:{&quot;type&quot;:&quot;string&quot;},&quot;time&quot;:{&quot;type&quot;:&quot;object&quot;}}}}}" SchemaFormat="JSON">
+            <GeneratingPSM>ConfigurationProperty[FullyQualifiedPropertyName:management.endpoints.actuator.exposure.include]</GeneratingPSM>
+          </messages>
+          <GeneratingPSM>ConfigurationProperty[FullyQualifiedPropertyName:management.endpoints.actuator.exposure.include]</GeneratingPSM>
+        </destinations>
+        <destinations xsi:type="PIM:Endpoint" Environment="COMPILE" RequestURI="GET /actuator/metrics">
+          <messages MessageType="RESPONSE" BodySchema="{&quot;type&quot;:&quot;object&quot;,&quot;properties&quot;:{&quot;Datacenter&quot;:{&quot;type&quot;:&quot;string&quot;},&quot;ID&quot;:{&quot;type&quot;:&quot;string&quot;},&quot;Node&quot;:{&quot;type&quot;:&quot;string&quot;},&quot;Address&quot;:{&quot;type&quot;:&quot;string&quot;},&quot;TaggedAddresses&quot;:{&quot;type&quot;:&quot;object&quot;,&quot;properties&quot;:{&quot;lan&quot;:{&quot;type&quot;:&quot;string&quot;},&quot;wan&quot;:{&quot;type&quot;:&quot;string&quot;}}},&quot;NodeMeta&quot;:{&quot;type&quot;:&quot;object&quot;,&quot;properties&quot;:{&quot;somekey&quot;:{&quot;type&quot;:&quot;string&quot;}}},&quot;Service&quot;:{&quot;type&quot;:&quot;object&quot;,&quot;properties&quot;:{&quot;ID&quot;:{&quot;type&quot;:&quot;string&quot;},&quot;Service&quot;:{&quot;type&quot;:&quot;string&quot;},&quot;Tags&quot;:{&quot;type&quot;:&quot;array&quot;,&quot;items&quot;:{&quot;type&quot;:&quot;string&quot;}},&quot;Address&quot;:{&quot;type&quot;:&quot;string&quot;},&quot;TaggedAddresses&quot;:{&quot;type&quot;:&quot;object&quot;,&quot;properties&quot;:{&quot;lan&quot;:{&quot;type&quot;:&quot;object&quot;,&quot;properties&quot;:{&quot;address&quot;:{&quot;type&quot;:&quot;string&quot;},&quot;port&quot;:{&quot;type&quot;:&quot;integer&quot;}}},&quot;wan&quot;:{&quot;type&quot;:&quot;object&quot;,&quot;properties&quot;:{&quot;address&quot;:{&quot;type&quot;:&quot;string&quot;},&quot;port&quot;:{&quot;type&quot;:&quot;integer&quot;}}}}},&quot;Meta&quot;:{&quot;type&quot;:&quot;object&quot;},&quot;Port&quot;:{&quot;type&quot;:&quot;integer&quot;}}},&quot;Check&quot;:{&quot;type&quot;:&quot;object&quot;},&quot;SkipNodeUpdate&quot;:{&quot;type&quot;:&quot;boolean&quot;}}}" SchemaFormat="JSON">
+            <GeneratingPSM>ConfigurationProperty[FullyQualifiedPropertyName:management.endpoints.actuator.exposure.include]</GeneratingPSM>
+          </messages>
+          <GeneratingPSM>ConfigurationProperty[FullyQualifiedPropertyName:management.endpoints.actuator.exposure.include]</GeneratingPSM>
+        </destinations>
+        <destinations xsi:type="PIM:Endpoint" Environment="COMPILE" RequestURI="POST /actuator/shutdown">
+          <messages MessageType="RESPONSE" BodySchema="{&quot;type&quot;:&quot;object&quot;,&quot;properties&quot;:{&quot;message&quot;:{&quot;type&quot;:&quot;string&quot;}}}" SchemaFormat="JSON">
+            <GeneratingPSM>ConfigurationProperty[FullyQualifiedPropertyName:management.endpoints.actuator.exposure.include]</GeneratingPSM>
+          </messages>
+          <GeneratingPSM>ConfigurationProperty[FullyQualifiedPropertyName:management.endpoints.actuator.exposure.include]</GeneratingPSM>
+        </destinations>
+        <GeneratingPSM>DockerContainerDefinition[ContainerName:shoppingcartservice,ImageField:base AS final, GeneratesLogs:false]</GeneratingPSM>
+        <GeneratingPSM>MicroserviceProject[ProjectArtifactId:shoppingcartservice]</GeneratingPSM>
+      </interface>
+      <dependencies ProviderName="configserver">
+        <GeneratingPSM>DockerContainerDefinition[ContainerName:shoppingcartservice,ImageField:base AS final, GeneratesLogs:false]</GeneratingPSM>
+        <GeneratingPSM>DockerContainerLink[LinksDependsOnField:configserver]</GeneratingPSM>
+      </dependencies>
+      <dependencies ProviderName="eurekaserver" ProviderDestination="Endpoint[RequestURI:POST /eureka/v2/apps/shoppingcartservice]" Environment="DOCKER">
+        <GeneratingPSM>DockerContainerDefinition[ContainerName:shoppingcartservice,ImageField:base AS final, GeneratesLogs:false]</GeneratingPSM>
+        <GeneratingPSM>DockerContainerLink[LinksDependsOnField:eurekaserver]</GeneratingPSM>
+        <GeneratingPSM>ConfigurationProperty[FullyQualifiedPropertyName:eureka.client.serviceUrl]</GeneratingPSM>
+      </dependencies>
+      <dependencies ProviderName="mysql" ProviderDestination="" Environment="DOCKER">
+        <GeneratingPSM>DockerContainerDefinition[ContainerName:shoppingcartservice,ImageField:base AS final, GeneratesLogs:false]</GeneratingPSM>
+        <GeneratingPSM>DockerContainerLink[LinksDependsOnField:mysql]</GeneratingPSM>
+        <GeneratingPSM>ConfigurationProperty[FullyQualifiedPropertyName:mysql.client.server]</GeneratingPSM>
+      </dependencies>
+      <dependencies ProviderName="zipkinserver" ProviderDestination="Endpoint[RequestURI:POST /api/v2/spans]" Environment="DOCKER">
+        <GeneratingPSM>ConfigurationProperty[FullyQualifiedPropertyName:management.tracing.exporterEndpoint]</GeneratingPSM>
+        <GeneratingPSM>ConfigurationProperty[FullyQualifiedPropertyName:management.tracing.exporter.zipkin.endpoint]</GeneratingPSM>
+      </dependencies>
+      <dependencies ProviderName="redis" ProviderDestination="" Environment="DOCKER">
+        <GeneratingPSM>ConfigurationProperty[FullyQualifiedPropertyName:redis.client.host]</GeneratingPSM>
+      </dependencies>
+      <GeneratingPSM>DockerContainerDefinition[ContainerName:shoppingcartservice,ImageField:base AS final, GeneratesLogs:false]</GeneratingPSM>
+      <GeneratingPSM>MicroserviceProject[ProjectArtifactId:shoppingcartservice]</GeneratingPSM>
+    </microservices>
+    <microservices MicroserviceName="orderservice">
+      <container ContainerName="orderservice">
+        <GeneratingPSM>DockerContainerDefinition[ContainerName:orderservice,ImageField:base AS final, GeneratesLogs:false]</GeneratingPSM>
+        <GeneratingPSM>MicroserviceProject[ProjectArtifactId:orderservice]</GeneratingPSM>
+      </container>
+      <components xsi:type="PIM:InfrastructureClientComponent" Category="Development_Pattern_Data_Persistence" Technology="MySQL" Environment="COMPILE">
+        <GeneratingPSM>ConfigurationProperty[FullyQualifiedPropertyName:mysql.client.username]</GeneratingPSM>
+        <GeneratingPSM>ConfigurationProperty[FullyQualifiedPropertyName:mysql.client.password]</GeneratingPSM>
+        <GeneratingPSM>ConfigurationProperty[FullyQualifiedPropertyName:mysql.client.server]</GeneratingPSM>
+        <GeneratingPSM>ConfigurationProperty[FullyQualifiedPropertyName:mysql.client.database]</GeneratingPSM>
+      </components>
+      <components Category="Observability_Pattern_Application_Metrics_Generation" Technology="Actuator" Environment="COMPILE">
+        <GeneratingPSM>ConfigurationProperty[FullyQualifiedPropertyName:management.endpoints.actuator.exposure.include]</GeneratingPSM>
+      </components>
+      <components xsi:type="PIM:InfrastructureClientComponent" Category="Observability_Pattern_Distributed_Tracing_and_Monitoring" Technology="Zipkin" Environment="COMPILE">
+        <GeneratingPSM>ConfigurationProperty[FullyQualifiedPropertyName:management.tracing.alwaysSample]</GeneratingPSM>
+        <GeneratingPSM>ConfigurationProperty[FullyQualifiedPropertyName:management.tracing.useShortTraceIds]</GeneratingPSM>
+        <GeneratingPSM>ConfigurationProperty[FullyQualifiedPropertyName:management.tracing.exporterEndpoint]</GeneratingPSM>
+        <GeneratingPSM>ConfigurationProperty[FullyQualifiedPropertyName:management.tracing.exporter.zipkin.endpoint]</GeneratingPSM>
+      </components>
+      <components xsi:type="PIM:InfrastructureClientComponent" Category="Service_Routing_Pattern_Registry_and_Discovery" Technology="Eureka" Environment="DOCKER">
+        <GeneratingPSM>ConfigurationProperty[FullyQualifiedPropertyName:eureka.client.serviceUrl]</GeneratingPSM>
+      </components>
+      <components Category="Client_Resiliency_Pattern_Load_Balancer" Technology="Ribbon" Environment="DOCKER">
+        <GeneratingPSM>ConfigurationProperty[FullyQualifiedPropertyName:eureka.client.serviceUrl]</GeneratingPSM>
+      </components>
+      <components xsi:type="PIM:InfrastructureClientComponent" Category="Development_Pattern_Data_Cache" Technology="Redis" Environment="DOCKER">
+        <GeneratingPSM>ConfigurationProperty[FullyQualifiedPropertyName:redis.client.host]</GeneratingPSM>
+      </components>
+      <interface ServerURL="[http|https]://orderservice:&lt;port-number>">
+        <destinations xsi:type="PIM:Endpoint" Environment="COMPILE" RequestURI="GET /actuator/env">
+          <GeneratingPSM>ConfigurationProperty[FullyQualifiedPropertyName:management.endpoints.actuator.exposure.include]</GeneratingPSM>
+        </destinations>
+        <destinations xsi:type="PIM:Endpoint" Environment="COMPILE" RequestURI="GET /actuator/logfile">
+          <GeneratingPSM>ConfigurationProperty[FullyQualifiedPropertyName:management.endpoints.actuator.exposure.include]</GeneratingPSM>
+        </destinations>
+        <destinations xsi:type="PIM:Endpoint" Environment="COMPILE" RequestURI="GET /actuator/health">
+          <messages MessageType="RESPONSE" BodySchema="{&quot;type&quot;:&quot;object&quot;,&quot;properties&quot;:{&quot;status&quot;:{&quot;type&quot;:&quot;string&quot;},&quot;details&quot;:{&quot;type&quot;:&quot;object&quot;}}}" SchemaFormat="JSON">
+            <GeneratingPSM>ConfigurationProperty[FullyQualifiedPropertyName:management.endpoints.actuator.exposure.include]</GeneratingPSM>
+          </messages>
+          <GeneratingPSM>ConfigurationProperty[FullyQualifiedPropertyName:management.endpoints.actuator.exposure.include]</GeneratingPSM>
+        </destinations>
+        <destinations xsi:type="PIM:Endpoint" Environment="COMPILE" RequestURI="GET /actuator/info">
+          <messages MessageType="RESPONSE" BodySchema="{&quot;type&quot;:&quot;object&quot;,&quot;properties&quot;:{&quot;git&quot;:{&quot;type&quot;:&quot;object&quot;,&quot;properties&quot;:{&quot;branch&quot;:{&quot;type&quot;:&quot;string&quot;},&quot;commit&quot;:{&quot;type&quot;:&quot;type&quot;:&quot;object&quot;,&quot;properties&quot;:{&quot;time&quot;:{&quot;type&quot;:&quot;object&quot;},&quot;id&quot;:{&quot;type&quot;:&quot;string&quot;}}}}},&quot;build&quot;:{&quot;type&quot;:&quot;object&quot;,&quot;properties&quot;:{&quot;artifact&quot;:{&quot;type&quot;:&quot;string&quot;},&quot;group&quot;:{&quot;type&quot;:&quot;string&quot;},&quot;name&quot;:{&quot;type&quot;:&quot;string&quot;},&quot;version&quot;:{&quot;type&quot;:&quot;string&quot;},&quot;time&quot;:{&quot;type&quot;:&quot;object&quot;}}}}}" SchemaFormat="JSON">
+            <GeneratingPSM>ConfigurationProperty[FullyQualifiedPropertyName:management.endpoints.actuator.exposure.include]</GeneratingPSM>
+          </messages>
+          <GeneratingPSM>ConfigurationProperty[FullyQualifiedPropertyName:management.endpoints.actuator.exposure.include]</GeneratingPSM>
+        </destinations>
+        <destinations xsi:type="PIM:Endpoint" Environment="COMPILE" RequestURI="GET /actuator/metrics">
+          <messages MessageType="RESPONSE" BodySchema="{&quot;type&quot;:&quot;object&quot;,&quot;properties&quot;:{&quot;Datacenter&quot;:{&quot;type&quot;:&quot;string&quot;},&quot;ID&quot;:{&quot;type&quot;:&quot;string&quot;},&quot;Node&quot;:{&quot;type&quot;:&quot;string&quot;},&quot;Address&quot;:{&quot;type&quot;:&quot;string&quot;},&quot;TaggedAddresses&quot;:{&quot;type&quot;:&quot;object&quot;,&quot;properties&quot;:{&quot;lan&quot;:{&quot;type&quot;:&quot;string&quot;},&quot;wan&quot;:{&quot;type&quot;:&quot;string&quot;}}},&quot;NodeMeta&quot;:{&quot;type&quot;:&quot;object&quot;,&quot;properties&quot;:{&quot;somekey&quot;:{&quot;type&quot;:&quot;string&quot;}}},&quot;Service&quot;:{&quot;type&quot;:&quot;object&quot;,&quot;properties&quot;:{&quot;ID&quot;:{&quot;type&quot;:&quot;string&quot;},&quot;Service&quot;:{&quot;type&quot;:&quot;string&quot;},&quot;Tags&quot;:{&quot;type&quot;:&quot;array&quot;,&quot;items&quot;:{&quot;type&quot;:&quot;string&quot;}},&quot;Address&quot;:{&quot;type&quot;:&quot;string&quot;},&quot;TaggedAddresses&quot;:{&quot;type&quot;:&quot;object&quot;,&quot;properties&quot;:{&quot;lan&quot;:{&quot;type&quot;:&quot;object&quot;,&quot;properties&quot;:{&quot;address&quot;:{&quot;type&quot;:&quot;string&quot;},&quot;port&quot;:{&quot;type&quot;:&quot;integer&quot;}}},&quot;wan&quot;:{&quot;type&quot;:&quot;object&quot;,&quot;properties&quot;:{&quot;address&quot;:{&quot;type&quot;:&quot;string&quot;},&quot;port&quot;:{&quot;type&quot;:&quot;integer&quot;}}}}},&quot;Meta&quot;:{&quot;type&quot;:&quot;object&quot;},&quot;Port&quot;:{&quot;type&quot;:&quot;integer&quot;}}},&quot;Check&quot;:{&quot;type&quot;:&quot;object&quot;},&quot;SkipNodeUpdate&quot;:{&quot;type&quot;:&quot;boolean&quot;}}}" SchemaFormat="JSON">
+            <GeneratingPSM>ConfigurationProperty[FullyQualifiedPropertyName:management.endpoints.actuator.exposure.include]</GeneratingPSM>
+          </messages>
+          <GeneratingPSM>ConfigurationProperty[FullyQualifiedPropertyName:management.endpoints.actuator.exposure.include]</GeneratingPSM>
+        </destinations>
+        <destinations xsi:type="PIM:Endpoint" Environment="COMPILE" RequestURI="POST /actuator/shutdown">
+          <messages MessageType="RESPONSE" BodySchema="{&quot;type&quot;:&quot;object&quot;,&quot;properties&quot;:{&quot;message&quot;:{&quot;type&quot;:&quot;string&quot;}}}" SchemaFormat="JSON">
+            <GeneratingPSM>ConfigurationProperty[FullyQualifiedPropertyName:management.endpoints.actuator.exposure.include]</GeneratingPSM>
+          </messages>
+          <GeneratingPSM>ConfigurationProperty[FullyQualifiedPropertyName:management.endpoints.actuator.exposure.include]</GeneratingPSM>
+        </destinations>
+        <GeneratingPSM>DockerContainerDefinition[ContainerName:orderservice,ImageField:base AS final, GeneratesLogs:false]</GeneratingPSM>
+        <GeneratingPSM>MicroserviceProject[ProjectArtifactId:orderservice]</GeneratingPSM>
+      </interface>
+      <dependencies ProviderName="configserver">
+        <GeneratingPSM>DockerContainerDefinition[ContainerName:orderservice,ImageField:base AS final, GeneratesLogs:false]</GeneratingPSM>
+        <GeneratingPSM>DockerContainerLink[LinksDependsOnField:configserver]</GeneratingPSM>
+      </dependencies>
+      <dependencies ProviderName="eurekaserver" ProviderDestination="Endpoint[RequestURI:POST /eureka/v2/apps/orderservice]" Environment="DOCKER">
+        <GeneratingPSM>DockerContainerDefinition[ContainerName:orderservice,ImageField:base AS final, GeneratesLogs:false]</GeneratingPSM>
+        <GeneratingPSM>DockerContainerLink[LinksDependsOnField:eurekaserver]</GeneratingPSM>
+        <GeneratingPSM>ConfigurationProperty[FullyQualifiedPropertyName:eureka.client.serviceUrl]</GeneratingPSM>
+      </dependencies>
+      <dependencies ProviderName="mysql" ProviderDestination="" Environment="DOCKER">
+        <GeneratingPSM>DockerContainerDefinition[ContainerName:orderservice,ImageField:base AS final, GeneratesLogs:false]</GeneratingPSM>
+        <GeneratingPSM>DockerContainerLink[LinksDependsOnField:mysql]</GeneratingPSM>
+        <GeneratingPSM>ConfigurationProperty[FullyQualifiedPropertyName:mysql.client.server]</GeneratingPSM>
+      </dependencies>
+      <dependencies ProviderName="zipkinserver" ProviderDestination="Endpoint[RequestURI:POST /api/v2/spans]" Environment="DOCKER">
+        <GeneratingPSM>ConfigurationProperty[FullyQualifiedPropertyName:management.tracing.exporterEndpoint]</GeneratingPSM>
+        <GeneratingPSM>ConfigurationProperty[FullyQualifiedPropertyName:management.tracing.exporter.zipkin.endpoint]</GeneratingPSM>
+      </dependencies>
+      <dependencies ProviderName="redis" ProviderDestination="" Environment="DOCKER">
+        <GeneratingPSM>ConfigurationProperty[FullyQualifiedPropertyName:redis.client.host]</GeneratingPSM>
+      </dependencies>
+      <GeneratingPSM>DockerContainerDefinition[ContainerName:orderservice,ImageField:base AS final, GeneratesLogs:false]</GeneratingPSM>
+      <GeneratingPSM>MicroserviceProject[ProjectArtifactId:orderservice]</GeneratingPSM>
+    </microservices>
+    <microservices MicroserviceName="musicstore">
+      <container ContainerName="musicstore">
+        <GeneratingPSM>DockerContainerDefinition[ContainerName:musicstore,ImageField:base AS final, GeneratesLogs:false]</GeneratingPSM>
+        <GeneratingPSM>MicroserviceProject[ProjectArtifactId:musicstore]</GeneratingPSM>
+      </container>
+      <components xsi:type="PIM:InfrastructureClientComponent" Category="Development_Pattern_Data_Persistence" Technology="MySQL" Environment="COMPILE">
+        <GeneratingPSM>ConfigurationProperty[FullyQualifiedPropertyName:mysql.client.username]</GeneratingPSM>
+        <GeneratingPSM>ConfigurationProperty[FullyQualifiedPropertyName:mysql.client.password]</GeneratingPSM>
+        <GeneratingPSM>ConfigurationProperty[FullyQualifiedPropertyName:mysql.client.server]</GeneratingPSM>
+        <GeneratingPSM>ConfigurationProperty[FullyQualifiedPropertyName:mysql.client.database]</GeneratingPSM>
+      </components>
+      <components Category="Observability_Pattern_Application_Metrics_Generation" Technology="Actuator" Environment="COMPILE">
+        <GeneratingPSM>ConfigurationProperty[FullyQualifiedPropertyName:management.endpoints.actuator.exposure.include]</GeneratingPSM>
+      </components>
+      <components xsi:type="PIM:InfrastructureClientComponent" Category="Observability_Pattern_Distributed_Tracing_and_Monitoring" Technology="Zipkin" Environment="COMPILE">
+        <GeneratingPSM>ConfigurationProperty[FullyQualifiedPropertyName:management.tracing.alwaysSample]</GeneratingPSM>
+        <GeneratingPSM>ConfigurationProperty[FullyQualifiedPropertyName:management.tracing.useShortTraceIds]</GeneratingPSM>
+        <GeneratingPSM>ConfigurationProperty[FullyQualifiedPropertyName:management.tracing.exporterEndpoint]</GeneratingPSM>
+        <GeneratingPSM>ConfigurationProperty[FullyQualifiedPropertyName:management.tracing.exporter.zipkin.endpoint]</GeneratingPSM>
+      </components>
+      <components xsi:type="PIM:InfrastructureClientComponent" Category="Service_Routing_Pattern_Registry_and_Discovery" Technology="Eureka" Environment="DOCKER">
+        <GeneratingPSM>ConfigurationProperty[FullyQualifiedPropertyName:eureka.client.serviceUrl]</GeneratingPSM>
+      </components>
+      <components Category="Client_Resiliency_Pattern_Load_Balancer" Technology="Ribbon" Environment="DOCKER">
+        <GeneratingPSM>ConfigurationProperty[FullyQualifiedPropertyName:eureka.client.serviceUrl]</GeneratingPSM>
+      </components>
+      <components xsi:type="PIM:InfrastructureClientComponent" Category="Development_Pattern_Data_Cache" Technology="Redis" Environment="DOCKER">
+        <GeneratingPSM>ConfigurationProperty[FullyQualifiedPropertyName:redis.client.host]</GeneratingPSM>
+      </components>
+      <components Category="Client_Resiliency_Pattern_Circuit_Breaker" Technology="Hystrix" Environment="COMPILE">
+        <GeneratingPSM>ConfigurationProperty[FullyQualifiedPropertyName:hystrix.command.default.circuitBreaker.requestVolumeThreshold]</GeneratingPSM>
+      </components>
+      <components Category="Observability_Pattern_Circuit_Breaker_Metrics_Generation" Technology="Hystrix" Environment="COMPILE">
+        <GeneratingPSM>ConfigurationProperty[FullyQualifiedPropertyName:hystrix.command.default.circuitBreaker.requestVolumeThreshold]</GeneratingPSM>
+      </components>
+      <interface ServerURL="[http|https]://musicstore:&lt;port-number>">
+        <destinations xsi:type="PIM:Endpoint" Environment="COMPILE" RequestURI="GET /actuator/env">
+          <GeneratingPSM>ConfigurationProperty[FullyQualifiedPropertyName:management.endpoints.actuator.exposure.include]</GeneratingPSM>
+        </destinations>
+        <destinations xsi:type="PIM:Endpoint" Environment="COMPILE" RequestURI="GET /actuator/logfile">
+          <GeneratingPSM>ConfigurationProperty[FullyQualifiedPropertyName:management.endpoints.actuator.exposure.include]</GeneratingPSM>
+        </destinations>
+        <destinations xsi:type="PIM:Endpoint" Environment="COMPILE" RequestURI="GET /actuator/health">
+          <messages MessageType="RESPONSE" BodySchema="{&quot;type&quot;:&quot;object&quot;,&quot;properties&quot;:{&quot;status&quot;:{&quot;type&quot;:&quot;string&quot;},&quot;details&quot;:{&quot;type&quot;:&quot;object&quot;}}}" SchemaFormat="JSON">
+            <GeneratingPSM>ConfigurationProperty[FullyQualifiedPropertyName:management.endpoints.actuator.exposure.include]</GeneratingPSM>
+          </messages>
+          <GeneratingPSM>ConfigurationProperty[FullyQualifiedPropertyName:management.endpoints.actuator.exposure.include]</GeneratingPSM>
+        </destinations>
+        <destinations xsi:type="PIM:Endpoint" Environment="COMPILE" RequestURI="GET /actuator/info">
+          <messages MessageType="RESPONSE" BodySchema="{&quot;type&quot;:&quot;object&quot;,&quot;properties&quot;:{&quot;git&quot;:{&quot;type&quot;:&quot;object&quot;,&quot;properties&quot;:{&quot;branch&quot;:{&quot;type&quot;:&quot;string&quot;},&quot;commit&quot;:{&quot;type&quot;:&quot;type&quot;:&quot;object&quot;,&quot;properties&quot;:{&quot;time&quot;:{&quot;type&quot;:&quot;object&quot;},&quot;id&quot;:{&quot;type&quot;:&quot;string&quot;}}}}},&quot;build&quot;:{&quot;type&quot;:&quot;object&quot;,&quot;properties&quot;:{&quot;artifact&quot;:{&quot;type&quot;:&quot;string&quot;},&quot;group&quot;:{&quot;type&quot;:&quot;string&quot;},&quot;name&quot;:{&quot;type&quot;:&quot;string&quot;},&quot;version&quot;:{&quot;type&quot;:&quot;string&quot;},&quot;time&quot;:{&quot;type&quot;:&quot;object&quot;}}}}}" SchemaFormat="JSON">
+            <GeneratingPSM>ConfigurationProperty[FullyQualifiedPropertyName:management.endpoints.actuator.exposure.include]</GeneratingPSM>
+          </messages>
+          <GeneratingPSM>ConfigurationProperty[FullyQualifiedPropertyName:management.endpoints.actuator.exposure.include]</GeneratingPSM>
+        </destinations>
+        <destinations xsi:type="PIM:Endpoint" Environment="COMPILE" RequestURI="GET /actuator/metrics">
+          <messages MessageType="RESPONSE" BodySchema="{&quot;type&quot;:&quot;object&quot;,&quot;properties&quot;:{&quot;Datacenter&quot;:{&quot;type&quot;:&quot;string&quot;},&quot;ID&quot;:{&quot;type&quot;:&quot;string&quot;},&quot;Node&quot;:{&quot;type&quot;:&quot;string&quot;},&quot;Address&quot;:{&quot;type&quot;:&quot;string&quot;},&quot;TaggedAddresses&quot;:{&quot;type&quot;:&quot;object&quot;,&quot;properties&quot;:{&quot;lan&quot;:{&quot;type&quot;:&quot;string&quot;},&quot;wan&quot;:{&quot;type&quot;:&quot;string&quot;}}},&quot;NodeMeta&quot;:{&quot;type&quot;:&quot;object&quot;,&quot;properties&quot;:{&quot;somekey&quot;:{&quot;type&quot;:&quot;string&quot;}}},&quot;Service&quot;:{&quot;type&quot;:&quot;object&quot;,&quot;properties&quot;:{&quot;ID&quot;:{&quot;type&quot;:&quot;string&quot;},&quot;Service&quot;:{&quot;type&quot;:&quot;string&quot;},&quot;Tags&quot;:{&quot;type&quot;:&quot;array&quot;,&quot;items&quot;:{&quot;type&quot;:&quot;string&quot;}},&quot;Address&quot;:{&quot;type&quot;:&quot;string&quot;},&quot;TaggedAddresses&quot;:{&quot;type&quot;:&quot;object&quot;,&quot;properties&quot;:{&quot;lan&quot;:{&quot;type&quot;:&quot;object&quot;,&quot;properties&quot;:{&quot;address&quot;:{&quot;type&quot;:&quot;string&quot;},&quot;port&quot;:{&quot;type&quot;:&quot;integer&quot;}}},&quot;wan&quot;:{&quot;type&quot;:&quot;object&quot;,&quot;properties&quot;:{&quot;address&quot;:{&quot;type&quot;:&quot;string&quot;},&quot;port&quot;:{&quot;type&quot;:&quot;integer&quot;}}}}},&quot;Meta&quot;:{&quot;type&quot;:&quot;object&quot;},&quot;Port&quot;:{&quot;type&quot;:&quot;integer&quot;}}},&quot;Check&quot;:{&quot;type&quot;:&quot;object&quot;},&quot;SkipNodeUpdate&quot;:{&quot;type&quot;:&quot;boolean&quot;}}}" SchemaFormat="JSON">
+            <GeneratingPSM>ConfigurationProperty[FullyQualifiedPropertyName:management.endpoints.actuator.exposure.include]</GeneratingPSM>
+          </messages>
+          <GeneratingPSM>ConfigurationProperty[FullyQualifiedPropertyName:management.endpoints.actuator.exposure.include]</GeneratingPSM>
+        </destinations>
+        <destinations xsi:type="PIM:Endpoint" Environment="COMPILE" RequestURI="POST /actuator/shutdown">
+          <messages MessageType="RESPONSE" BodySchema="{&quot;type&quot;:&quot;object&quot;,&quot;properties&quot;:{&quot;message&quot;:{&quot;type&quot;:&quot;string&quot;}}}" SchemaFormat="JSON">
+            <GeneratingPSM>ConfigurationProperty[FullyQualifiedPropertyName:management.endpoints.actuator.exposure.include]</GeneratingPSM>
+          </messages>
+          <GeneratingPSM>ConfigurationProperty[FullyQualifiedPropertyName:management.endpoints.actuator.exposure.include]</GeneratingPSM>
+        </destinations>
+        <destinations xsi:type="PIM:Endpoint" Environment="COMPILE" RequestURI="GET /actuator/hystrix.stream">
+          <GeneratingPSM>ConfigurationProperty[FullyQualifiedPropertyName:hystrix.command.default.circuitBreaker.requestVolumeThreshold]</GeneratingPSM>
+        </destinations>
+        <GeneratingPSM>DockerContainerDefinition[ContainerName:musicstore,ImageField:base AS final, GeneratesLogs:false]</GeneratingPSM>
+        <GeneratingPSM>MicroserviceProject[ProjectArtifactId:musicstore]</GeneratingPSM>
+      </interface>
+      <dependencies ProviderName="configserver">
+        <GeneratingPSM>DockerContainerDefinition[ContainerName:musicstore,ImageField:base AS final, GeneratesLogs:false]</GeneratingPSM>
+        <GeneratingPSM>DockerContainerLink[LinksDependsOnField:configserver]</GeneratingPSM>
+      </dependencies>
+      <dependencies ProviderName="eurekaserver" ProviderDestination="Endpoint[RequestURI:POST /eureka/v2/apps/musicstore]" Environment="DOCKER">
+        <GeneratingPSM>DockerContainerDefinition[ContainerName:musicstore,ImageField:base AS final, GeneratesLogs:false]</GeneratingPSM>
+        <GeneratingPSM>DockerContainerLink[LinksDependsOnField:eurekaserver]</GeneratingPSM>
+        <GeneratingPSM>ConfigurationProperty[FullyQualifiedPropertyName:eureka.client.serviceUrl]</GeneratingPSM>
+      </dependencies>
+      <dependencies ProviderName="musicservice">
+        <GeneratingPSM>DockerContainerDefinition[ContainerName:musicstore,ImageField:base AS final, GeneratesLogs:false]</GeneratingPSM>
+        <GeneratingPSM>DockerContainerLink[LinksDependsOnField:musicservice]</GeneratingPSM>
+      </dependencies>
+      <dependencies ProviderName="shoppingcartservice">
+        <GeneratingPSM>DockerContainerDefinition[ContainerName:musicstore,ImageField:base AS final, GeneratesLogs:false]</GeneratingPSM>
+        <GeneratingPSM>DockerContainerLink[LinksDependsOnField:shoppingcartservice]</GeneratingPSM>
+      </dependencies>
+      <dependencies ProviderName="orderservice">
+        <GeneratingPSM>DockerContainerDefinition[ContainerName:musicstore,ImageField:base AS final, GeneratesLogs:false]</GeneratingPSM>
+        <GeneratingPSM>DockerContainerLink[LinksDependsOnField:orderservice]</GeneratingPSM>
+      </dependencies>
+      <dependencies ProviderName="mysql" ProviderDestination="" Environment="DOCKER">
+        <GeneratingPSM>DockerContainerDefinition[ContainerName:musicstore,ImageField:base AS final, GeneratesLogs:false]</GeneratingPSM>
+        <GeneratingPSM>DockerContainerLink[LinksDependsOnField:mysql]</GeneratingPSM>
+        <GeneratingPSM>ConfigurationProperty[FullyQualifiedPropertyName:mysql.client.server]</GeneratingPSM>
+      </dependencies>
+      <dependencies ProviderName="zipkinserver" ProviderDestination="Endpoint[RequestURI:POST /api/v2/spans]" Environment="DOCKER">
+        <GeneratingPSM>ConfigurationProperty[FullyQualifiedPropertyName:management.tracing.exporterEndpoint]</GeneratingPSM>
+        <GeneratingPSM>ConfigurationProperty[FullyQualifiedPropertyName:management.tracing.exporter.zipkin.endpoint]</GeneratingPSM>
+      </dependencies>
+      <dependencies ProviderName="redis" ProviderDestination="" Environment="DOCKER">
+        <GeneratingPSM>ConfigurationProperty[FullyQualifiedPropertyName:redis.client.host]</GeneratingPSM>
+      </dependencies>
+      <GeneratingPSM>DockerContainerDefinition[ContainerName:musicstore,ImageField:base AS final, GeneratesLogs:false]</GeneratingPSM>
+      <GeneratingPSM>MicroserviceProject[ProjectArtifactId:musicstore]</GeneratingPSM>
+    </microservices>
+    <GeneratingPSM>DistributedApplicationProject[ApplicationName:Music Store]</GeneratingPSM>
+    <GeneratingPSM>ApplicationProject[ProjectArtifactId:Music Store]</GeneratingPSM>
+  </architecture>
+</PIM:RootPIM>
