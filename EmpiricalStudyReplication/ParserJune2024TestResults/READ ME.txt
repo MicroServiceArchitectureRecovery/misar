@@ -1,0 +1,5 @@
+Micro Company link: https://github.com/idugalic/micro-company
+
+Train Ticket Link: https://github.com/jo102tz/train-ticket
+
+THE ECORE FILES USED FOR THESE RESULTS ARE IN THIS FOLDER

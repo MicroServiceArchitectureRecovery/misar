@@ -1,0 +1,85 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<PSM:RootPSM xmlns:xmi="http://www.omg.org/XMI" xmlns:PSM="http://localhost/mdd/PSM.ecore" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmi:version="2.0" xsi:schemaLocation="http://localhost/mdd/PSM.ecore PSM.ecore" >
+  <application ApplicationName="music store" ProjectPackageURL="C:/Users/Student/Samples-main/MusicStore/src">
+    <containers ContainerName="configserver" BuildField="" ImageField="steeltoeoss/config-server" ParentProjectName="music store" ArtifactFileName="C:/Users/Student/Samples-main/MusicStore/docker-compose.yml">
+      <ports ExposesPortsField="8888:8888" ParentProjectName="music store" ArtifactFileName="C:/Users/Student/Samples-main/MusicStore/docker-compose.yml"/>
+    </containers>
+    <containers ContainerName="eurekaserver" BuildField="" ImageField="steeltoeoss/eurekaserver" ParentProjectName="music store" ArtifactFileName="C:/Users/Student/Samples-main/MusicStore/docker-compose.yml">
+      <ports ExposesPortsField="8761:8761" ParentProjectName="music store" ArtifactFileName="C:/Users/Student/Samples-main/MusicStore/docker-compose.yml"/>
+    </containers>
+    <containers ContainerName="spring-boot-admin" BuildField="" ImageField="hananiel/spring-boot-admin-eureka-sample" ParentProjectName="music store" ArtifactFileName="C:/Users/Student/Samples-main/MusicStore/docker-compose.yml">
+      <ports ExposesPortsField="8889:8080" ParentProjectName="music store" ArtifactFileName="C:/Users/Student/Samples-main/MusicStore/docker-compose.yml"/>
+      <links LinksDependsOnField="eurekaserver" ParentProjectName="music store" ArtifactFileName="C:/Users/Student/Samples-main/MusicStore/docker-compose.yml"/>
+    </containers>
+    <containers ContainerName="mysql" BuildField="" ImageField="mysql:5.7" ParentProjectName="music store" ArtifactFileName="C:/Users/Student/Samples-main/MusicStore/docker-compose.yml">
+      <links LinksDependsOnField="configserver" ParentProjectName="music store" ArtifactFileName="C:/Users/Student/Samples-main/MusicStore/docker-compose.yml"/>
+      <links DependencyOrder="2" LinksDependsOnField="eurekaserver" ParentProjectName="music store" ArtifactFileName="C:/Users/Student/Samples-main/MusicStore/docker-compose.yml"/>
+    </containers>
+    <containers ContainerName="zipkinserver" BuildField="" ImageField="steeltoeoss/zipkin" ParentProjectName="music store" ArtifactFileName="C:/Users/Student/Samples-main/MusicStore/docker-compose.yml">
+      <ports ExposesPortsField="9411:9411" ParentProjectName="music store" ArtifactFileName="C:/Users/Student/Samples-main/MusicStore/docker-compose.yml"/>
+    </containers>
+    <containers ContainerName="musicservice" BuildField="./src/MusicStoreService" ImageField="base AS final" ParentProjectName="music store" ArtifactFileName="C:/Users/Student/Samples-main/MusicStore/docker-compose.yml">
+      <ports ExposesPortsField="80" ParentProjectName="music store" ArtifactFileName="C:/Users/Student/Samples-main/MusicStore/docker-compose.yml"/>
+      <links LinksDependsOnField="configserver" ParentProjectName="music store" ArtifactFileName="C:/Users/Student/Samples-main/MusicStore/docker-compose.yml"/>
+      <links DependencyOrder="2" LinksDependsOnField="eurekaserver" ParentProjectName="music store" ArtifactFileName="C:/Users/Student/Samples-main/MusicStore/docker-compose.yml"/>
+      <links DependencyOrder="3" LinksDependsOnField="mysql" ParentProjectName="music store" ArtifactFileName="C:/Users/Student/Samples-main/MusicStore/docker-compose.yml"/>
+    </containers>
+    <containers ContainerName="shoppingcartservice" BuildField="./src/ShoppingCartService" ImageField="base AS final" ParentProjectName="music store" ArtifactFileName="C:/Users/Student/Samples-main/MusicStore/docker-compose.yml">
+      <ports ExposesPortsField="80" ParentProjectName="music store" ArtifactFileName="C:/Users/Student/Samples-main/MusicStore/docker-compose.yml"/>
+      <links LinksDependsOnField="configserver" ParentProjectName="music store" ArtifactFileName="C:/Users/Student/Samples-main/MusicStore/docker-compose.yml"/>
+      <links DependencyOrder="2" LinksDependsOnField="eurekaserver" ParentProjectName="music store" ArtifactFileName="C:/Users/Student/Samples-main/MusicStore/docker-compose.yml"/>
+      <links DependencyOrder="3" LinksDependsOnField="mysql" ParentProjectName="music store" ArtifactFileName="C:/Users/Student/Samples-main/MusicStore/docker-compose.yml"/>
+    </containers>
+    <containers ContainerName="orderservice" BuildField="./src/OrderService" ImageField="base AS final" ParentProjectName="music store" ArtifactFileName="C:/Users/Student/Samples-main/MusicStore/docker-compose.yml">
+      <ports ExposesPortsField="80" ParentProjectName="music store" ArtifactFileName="C:/Users/Student/Samples-main/MusicStore/docker-compose.yml"/>
+      <links LinksDependsOnField="configserver" ParentProjectName="music store" ArtifactFileName="C:/Users/Student/Samples-main/MusicStore/docker-compose.yml"/>
+      <links DependencyOrder="2" LinksDependsOnField="eurekaserver" ParentProjectName="music store" ArtifactFileName="C:/Users/Student/Samples-main/MusicStore/docker-compose.yml"/>
+      <links DependencyOrder="3" LinksDependsOnField="mysql" ParentProjectName="music store" ArtifactFileName="C:/Users/Student/Samples-main/MusicStore/docker-compose.yml"/>
+    </containers>
+    <containers ContainerName="musicstore" BuildField="./src/MusicStoreUI" ImageField="base AS final" ParentProjectName="music store" ArtifactFileName="C:/Users/Student/Samples-main/MusicStore/docker-compose.yml">
+      <ports ExposesPortsField="80" ParentProjectName="music store" ArtifactFileName="C:/Users/Student/Samples-main/MusicStore/docker-compose.yml"/>
+      <links LinksDependsOnField="configserver" ParentProjectName="music store" ArtifactFileName="C:/Users/Student/Samples-main/MusicStore/docker-compose.yml"/>
+      <links DependencyOrder="2" LinksDependsOnField="eurekaserver" ParentProjectName="music store" ArtifactFileName="C:/Users/Student/Samples-main/MusicStore/docker-compose.yml"/>
+      <links DependencyOrder="3" LinksDependsOnField="musicservice" ParentProjectName="music store" ArtifactFileName="C:/Users/Student/Samples-main/MusicStore/docker-compose.yml"/>
+      <links DependencyOrder="4" LinksDependsOnField="shoppingcartservice" ParentProjectName="music store" ArtifactFileName="C:/Users/Student/Samples-main/MusicStore/docker-compose.yml"/>
+      <links DependencyOrder="5" LinksDependsOnField="orderservice" ParentProjectName="music store" ArtifactFileName="C:/Users/Student/Samples-main/MusicStore/docker-compose.yml"/>
+      <links DependencyOrder="6" LinksDependsOnField="mysql" ParentProjectName="music store" ArtifactFileName="C:/Users/Student/Samples-main/MusicStore/docker-compose.yml"/>
+    </containers>
+    <application_project ParentProjectName="music store" ArtifactFileName="" ProjectArtifactId="music store">
+      <modules xsi:type="PSM:JavaSpringMVCApplicationProject" ParentProjectName="music store" ArtifactFileName="" ProjectArtifactId="config">
+        <properties ParentProjectName="config" ArtifactFileName="C:/Users/Student/Samples-main/MusicStore/src/config/application.yml" FullyQualifiedPropertyName="AppSettings.SiteTitle" PropertyValue="Music Store" ConfigurationProfile="COMPILE"/>
+        <properties ParentProjectName="config" ArtifactFileName="C:/Users/Student/Samples-main/MusicStore/src/config/application.yml" FullyQualifiedPropertyName="AppSettings.CacheDbResults" PropertyValue="true" ConfigurationProfile="COMPILE"/>
+        <properties ParentProjectName="config" ArtifactFileName="C:/Users/Student/Samples-main/MusicStore/src/config/application.yml" FullyQualifiedPropertyName="Logging.LogLevel.Default" PropertyValue="Information" ConfigurationProfile="COMPILE"/>
+        <properties ParentProjectName="config" ArtifactFileName="C:/Users/Student/Samples-main/MusicStore/src/config/application.yml" FullyQualifiedPropertyName="Logging.LogLevel.System" PropertyValue="Warning" ConfigurationProfile="COMPILE"/>
+        <properties ParentProjectName="config" ArtifactFileName="C:/Users/Student/Samples-main/MusicStore/src/config/application.yml" FullyQualifiedPropertyName="Logging.LogLevel.Microsoft" PropertyValue="Warning" ConfigurationProfile="COMPILE"/>
+        <properties ParentProjectName="config" ArtifactFileName="C:/Users/Student/Samples-main/MusicStore/src/config/application.yml" FullyQualifiedPropertyName="Logging.LogLevel.Steeltoe" PropertyValue="Information" ConfigurationProfile="COMPILE"/>
+        <properties ParentProjectName="config" ArtifactFileName="C:/Users/Student/Samples-main/MusicStore/src/config/application.yml" FullyQualifiedPropertyName="eureka.instance.StatusPageUrlPath" PropertyValue="/actuator/info" ConfigurationProfile="COMPILE"/>
+        <properties ParentProjectName="config" ArtifactFileName="C:/Users/Student/Samples-main/MusicStore/src/config/application.yml" FullyQualifiedPropertyName="eureka.instance.HealthCheckUrlPath" PropertyValue="/actuator/health" ConfigurationProfile="COMPILE"/>
+        <properties ParentProjectName="config" ArtifactFileName="C:/Users/Student/Samples-main/MusicStore/src/config/application.yml" FullyQualifiedPropertyName="mysql.client.username" PropertyValue="root" ConfigurationProfile="COMPILE"/>
+        <properties ParentProjectName="config" ArtifactFileName="C:/Users/Student/Samples-main/MusicStore/src/config/application.yml" FullyQualifiedPropertyName="mysql.client.password" PropertyValue="steeltoe" ConfigurationProfile="COMPILE"/>
+        <properties ParentProjectName="config" ArtifactFileName="C:/Users/Student/Samples-main/MusicStore/src/config/application.yml" FullyQualifiedPropertyName="management.endpoints.actuator.exposure.include" PropertyValue="[ &quot;*&quot; ]" ConfigurationProfile="COMPILE"/>
+        <properties ParentProjectName="config" ArtifactFileName="C:/Users/Student/Samples-main/MusicStore/src/config/application.yml" FullyQualifiedPropertyName="management.tracing.alwaysSample" PropertyValue="true" ConfigurationProfile="COMPILE"/>
+        <properties ParentProjectName="config" ArtifactFileName="C:/Users/Student/Samples-main/MusicStore/src/config/application.yml" FullyQualifiedPropertyName="management.tracing.useShortTraceIds" PropertyValue="true" ConfigurationProfile="COMPILE"/>
+        <properties ParentProjectName="config" ArtifactFileName="C:/Users/Student/Samples-main/MusicStore/src/config/application.yml" FullyQualifiedPropertyName="management.tracing.exporterEndpoint" PropertyValue="http://zipkinserver:9411/api/v2/spans" ConfigurationProfile="COMPILE"/>
+        <properties ParentProjectName="config" ArtifactFileName="C:/Users/Student/Samples-main/MusicStore/src/config/application.yml" FullyQualifiedPropertyName="spring.profiles" PropertyValue="Docker" ConfigurationProfile="DOCKER"/>
+        <properties ParentProjectName="config" ArtifactFileName="C:/Users/Student/Samples-main/MusicStore/src/config/application.yml" FullyQualifiedPropertyName="eureka.client.serviceUrl" PropertyValue="http://eurekaserver:8761/eureka/" ConfigurationProfile="DOCKER"/>
+        <properties ParentProjectName="config" ArtifactFileName="C:/Users/Student/Samples-main/MusicStore/src/config/application.yml" FullyQualifiedPropertyName="mysql.client.server" PropertyValue="mysql" ConfigurationProfile="DOCKER"/>
+        <properties ParentProjectName="config" ArtifactFileName="C:/Users/Student/Samples-main/MusicStore/src/config/application.yml" FullyQualifiedPropertyName="management.tracing.exporter.zipkin.endpoint" PropertyValue="http://zipkinserver:9411/api/v2/spans" ConfigurationProfile="DOCKER"/>
+        <properties ParentProjectName="config" ArtifactFileName="C:/Users/Student/Samples-main/MusicStore/src/config/application.yml" FullyQualifiedPropertyName="redis.client.host" PropertyValue="redis" ConfigurationProfile="DOCKER"/>
+        <layers ParentProjectName="config" LayerName="SpringWebApplicationLayer"/>
+      </modules>
+      <modules xsi:type="PSM:JavaSpringMVCApplicationProject" ParentProjectName="music store" ArtifactFileName="" ProjectArtifactId="MusicStoreService">
+        <layers ParentProjectName="MusicStoreService" LayerName="SpringWebApplicationLayer"/>
+      </modules>
+      <modules xsi:type="PSM:JavaSpringMVCApplicationProject" ParentProjectName="music store" ArtifactFileName="" ProjectArtifactId="MusicStoreUI">
+        <layers ParentProjectName="MusicStoreUI" LayerName="SpringWebApplicationLayer"/>
+      </modules>
+      <modules xsi:type="PSM:JavaSpringMVCApplicationProject" ParentProjectName="music store" ArtifactFileName="" ProjectArtifactId="OrderService">
+        <layers ParentProjectName="OrderService" LayerName="SpringWebApplicationLayer"/>
+      </modules>
+      <modules xsi:type="PSM:JavaSpringMVCApplicationProject" ParentProjectName="music store" ArtifactFileName="" ProjectArtifactId="ShoppingCartService">
+        <layers ParentProjectName="ShoppingCartService" LayerName="SpringWebApplicationLayer"/>
+      </modules>
+    </application_project>
+  </application>
+</PSM:RootPSM>

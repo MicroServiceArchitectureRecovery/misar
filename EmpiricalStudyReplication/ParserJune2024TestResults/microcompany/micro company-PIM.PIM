@@ -1,0 +1,628 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xmi:XMI xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:PIM="http://localhost/mdd/PIM.ecore" xsi:schemaLocation="http://localhost/mdd/PIM.ecore ../source/PIM.ecore">
+  <PIM:RootPIM>
+    <architecture ArchitectureName="micro company">
+      <microservices xsi:type="PIM:InfrastructureMicroservice" MicroserviceName="my-rabbit">
+        <container ContainerName="my-rabbit">
+          <GeneratingPSM>DockerContainerDefinition[ContainerName:my-rabbit,ImageField:rabbitmq:3-management, GeneratesLogs:false]</GeneratingPSM>
+        </container>
+        <components xsi:type="PIM:InfrastructureServerComponent" Category="Development_Pattern_Asynchronous_Message_Brokering" Technology="RabbitMQ">
+          <GeneratingPSM>DockerContainerDefinition[ContainerName:my-rabbit,ImageField:rabbitmq:3-management, GeneratesLogs:false]</GeneratingPSM>
+        </components>
+        <interface ServerURL="[http|https]://my-rabbit:&lt;port-number>">
+          <GeneratingPSM>DockerContainerDefinition[ContainerName:my-rabbit,ImageField:rabbitmq:3-management, GeneratesLogs:false]</GeneratingPSM>
+        </interface>
+        <GeneratingPSM>DockerContainerDefinition[ContainerName:my-rabbit,ImageField:rabbitmq:3-management, GeneratesLogs:false]</GeneratingPSM>
+      </microservices>
+      <microservices xsi:type="PIM:InfrastructureMicroservice" MicroserviceName="configserver">
+        <container ContainerName="configserver">
+          <GeneratingPSM>DockerContainerDefinition[ContainerName:configserver,ImageField:idugalic/configserver, GeneratesLogs:false]</GeneratingPSM>
+          <GeneratingPSM>MicroserviceProject[ProjectArtifactId:configserver]</GeneratingPSM>
+        </container>
+        <components xsi:type="PIM:InfrastructureServerComponent" Category="Development_Pattern_Centralized_Configuration" Technology="Spring Cloud Config" Environment="COMPILE">
+          <GeneratingPSM>DependencyLibrary[LibraryName:spring-cloud-config-server]</GeneratingPSM>
+          <GeneratingPSM>ConfigurationProperty[FullyQualifiedPropertyName:spring.cloud.config.server.git.uri]</GeneratingPSM>
+          <GeneratingPSM>ConfigurationProperty[FullyQualifiedPropertyName:spring.cloud.config.server.git.default-label]</GeneratingPSM>
+          <GeneratingPSM>JavaAnnotation[AnnotationName:EnableConfigServer]</GeneratingPSM>
+        </components>
+        <components Category="Security_Pattern_Web_Security" Technology="Spring Security" Environment="COMPILE">
+          <GeneratingPSM>ConfigurationProperty[FullyQualifiedPropertyName:security.user.password]</GeneratingPSM>
+        </components>
+        <components xsi:type="PIM:InfrastructureClientComponent" Category="Service_Routing_Pattern_Registry_and_Discovery" Environment="COMPILE">
+          <GeneratingPSM>JavaAnnotation[AnnotationName:EnableDiscoveryClient]</GeneratingPSM>
+        </components>
+        <interface ServerURL="[http|https]://configserver:&lt;port-number>">
+          <destinations xsi:type="PIM:Endpoint" Environment="COMPILE" RequestURI="GET /{appID}/{profile}">
+            <GeneratingPSM>DependencyLibrary[LibraryName:spring-cloud-config-server]</GeneratingPSM>
+            <GeneratingPSM>ConfigurationProperty[FullyQualifiedPropertyName:spring.cloud.config.server.git.uri]</GeneratingPSM>
+            <GeneratingPSM>ConfigurationProperty[FullyQualifiedPropertyName:spring.cloud.config.server.git.default-label]</GeneratingPSM>
+            <GeneratingPSM>JavaAnnotation[AnnotationName:EnableConfigServer]</GeneratingPSM>
+          </destinations>
+          <GeneratingPSM>DockerContainerDefinition[ContainerName:configserver,ImageField:idugalic/configserver, GeneratesLogs:false]</GeneratingPSM>
+          <GeneratingPSM>MicroserviceProject[ProjectArtifactId:configserver]</GeneratingPSM>
+        </interface>
+        <GeneratingPSM>DockerContainerDefinition[ContainerName:configserver,ImageField:idugalic/configserver, GeneratesLogs:false]</GeneratingPSM>
+        <GeneratingPSM>MicroserviceProject[ProjectArtifactId:configserver]</GeneratingPSM>
+      </microservices>
+      <microservices xsi:type="PIM:InfrastructureMicroservice" MicroserviceName="registry">
+        <container ContainerName="registry">
+          <GeneratingPSM>DockerContainerDefinition[ContainerName:registry,ImageField:idugalic/registry, GeneratesLogs:false]</GeneratingPSM>
+          <GeneratingPSM>MicroserviceProject[ProjectArtifactId:registry]</GeneratingPSM>
+        </container>
+        <components xsi:type="PIM:InfrastructureServerComponent" Category="Service_Routing_Pattern_Registry_and_Discovery" Technology="Eureka" Environment="COMPILE">
+          <GeneratingPSM>DependencyLibrary[LibraryName:spring-cloud-starter-eureka-server]</GeneratingPSM>
+          <GeneratingPSM>JavaAnnotation[AnnotationName:EnableEurekaServer]</GeneratingPSM>
+        </components>
+        <components Category="Client_Resiliency_Pattern_Load_Balancer" Technology="Ribbon" Environment="COMPILE">
+          <GeneratingPSM>DependencyLibrary[LibraryName:spring-cloud-starter-eureka-server]</GeneratingPSM>
+          <GeneratingPSM>JavaAnnotation[AnnotationName:EnableEurekaServer]</GeneratingPSM>
+        </components>
+        <components xsi:type="PIM:InfrastructureClientComponent" Category="Development_Pattern_Centralized_Configuration" Technology="Spring Cloud Config" Environment="COMPILE">
+          <GeneratingPSM>DependencyLibrary[LibraryName:spring-cloud-config-client]</GeneratingPSM>
+          <GeneratingPSM>ConfigurationProperty[FullyQualifiedPropertyName:spring.cloud.config.uri]</GeneratingPSM>
+        </components>
+        <interface ServerURL="[http|https]://registry:&lt;port-number>">
+          <destinations xsi:type="PIM:Endpoint" Environment="COMPILE" RequestURI="GET /eureka/v2/apps/">
+            <GeneratingPSM>DependencyLibrary[LibraryName:spring-cloud-starter-eureka-server]</GeneratingPSM>
+            <GeneratingPSM>JavaAnnotation[AnnotationName:EnableEurekaServer]</GeneratingPSM>
+          </destinations>
+          <destinations xsi:type="PIM:Endpoint" Environment="COMPILE" RequestURI="GET /eureka/v2/apps/{appID}">
+            <GeneratingPSM>DependencyLibrary[LibraryName:spring-cloud-starter-eureka-server]</GeneratingPSM>
+            <GeneratingPSM>JavaAnnotation[AnnotationName:EnableEurekaServer]</GeneratingPSM>
+          </destinations>
+          <destinations xsi:type="PIM:Endpoint" Environment="COMPILE" RequestURI="POST /eureka/v2/apps/{appID}">
+            <GeneratingPSM>DependencyLibrary[LibraryName:spring-cloud-starter-eureka-server]</GeneratingPSM>
+            <GeneratingPSM>JavaAnnotation[AnnotationName:EnableEurekaServer]</GeneratingPSM>
+          </destinations>
+          <GeneratingPSM>DockerContainerDefinition[ContainerName:registry,ImageField:idugalic/registry, GeneratesLogs:false]</GeneratingPSM>
+          <GeneratingPSM>MicroserviceProject[ProjectArtifactId:registry]</GeneratingPSM>
+        </interface>
+        <dependencies ProviderName="configserver" ProviderDestination="Endpoint[RequestURI:GET /registry/default]" Environment="DOCKER">
+          <GeneratingPSM>ConfigurationProperty[FullyQualifiedPropertyName:spring.cloud.config.uri]</GeneratingPSM>
+        </dependencies>
+        <GeneratingPSM>DockerContainerDefinition[ContainerName:registry,ImageField:idugalic/registry, GeneratesLogs:false]</GeneratingPSM>
+        <GeneratingPSM>MicroserviceProject[ProjectArtifactId:registry]</GeneratingPSM>
+      </microservices>
+      <microservices xsi:type="PIM:FunctionalMicroservice" MicroserviceName="authserver">
+        <container ContainerName="authserver">
+          <GeneratingPSM>DockerContainerDefinition[ContainerName:authserver,ImageField:idugalic/authserver, GeneratesLogs:false]</GeneratingPSM>
+          <GeneratingPSM>MicroserviceProject[ProjectArtifactId:authserver]</GeneratingPSM>
+        </container>
+        <components Category="Security_Pattern_Web_Security" Technology="Spring Security" Environment="COMPILE">
+          <GeneratingPSM>DependencyLibrary[LibraryName:spring-boot-starter-security]</GeneratingPSM>
+        </components>
+        <components Category="Security_Pattern_Authorization_and_Authentication" Technology="Spring Cloud OAuth2" Environment="COMPILE">
+          <GeneratingPSM>DependencyLibrary[LibraryName:spring-security-oauth2]</GeneratingPSM>
+        </components>
+        <components Category="Observability_Pattern_Application_Metrics_Generation" Technology="Actuator" Environment="COMPILE">
+          <GeneratingPSM>DependencyLibrary[LibraryName:spring-boot-starter-actuator]</GeneratingPSM>
+        </components>
+        <components xsi:type="PIM:InfrastructureClientComponent" Category="Development_Pattern_Centralized_Configuration" Technology="Spring Cloud Config" Environment="COMPILE">
+          <GeneratingPSM>DependencyLibrary[LibraryName:spring-cloud-config-client]</GeneratingPSM>
+          <GeneratingPSM>ConfigurationProperty[FullyQualifiedPropertyName:spring.cloud.config.uri]</GeneratingPSM>
+        </components>
+        <interface ServerURL="[http|https]://authserver:&lt;port-number>">
+          <destinations xsi:type="PIM:Endpoint" Environment="COMPILE" RequestURI="GET /actuator/env">
+            <GeneratingPSM>DependencyLibrary[LibraryName:spring-boot-starter-actuator]</GeneratingPSM>
+          </destinations>
+          <destinations xsi:type="PIM:Endpoint" Environment="COMPILE" RequestURI="GET /actuator/logfile">
+            <GeneratingPSM>DependencyLibrary[LibraryName:spring-boot-starter-actuator]</GeneratingPSM>
+          </destinations>
+          <destinations xsi:type="PIM:Endpoint" Environment="COMPILE" RequestURI="GET /actuator/health">
+            <messages MessageType="RESPONSE" BodySchema="{&quot;type&quot;:&quot;object&quot;,&quot;properties&quot;:{&quot;status&quot;:{&quot;type&quot;:&quot;string&quot;},&quot;details&quot;:{&quot;type&quot;:&quot;object&quot;}}}" SchemaFormat="JSON">
+              <GeneratingPSM>DependencyLibrary[LibraryName:spring-boot-starter-actuator]</GeneratingPSM>
+            </messages>
+            <GeneratingPSM>DependencyLibrary[LibraryName:spring-boot-starter-actuator]</GeneratingPSM>
+          </destinations>
+          <destinations xsi:type="PIM:Endpoint" Environment="COMPILE" RequestURI="GET /actuator/info">
+            <messages MessageType="RESPONSE" BodySchema="{&quot;type&quot;:&quot;object&quot;,&quot;properties&quot;:{&quot;git&quot;:{&quot;type&quot;:&quot;object&quot;,&quot;properties&quot;:{&quot;branch&quot;:{&quot;type&quot;:&quot;string&quot;},&quot;commit&quot;:{&quot;type&quot;:&quot;type&quot;:&quot;object&quot;,&quot;properties&quot;:{&quot;time&quot;:{&quot;type&quot;:&quot;object&quot;},&quot;id&quot;:{&quot;type&quot;:&quot;string&quot;}}}}},&quot;build&quot;:{&quot;type&quot;:&quot;object&quot;,&quot;properties&quot;:{&quot;artifact&quot;:{&quot;type&quot;:&quot;string&quot;},&quot;group&quot;:{&quot;type&quot;:&quot;string&quot;},&quot;name&quot;:{&quot;type&quot;:&quot;string&quot;},&quot;version&quot;:{&quot;type&quot;:&quot;string&quot;},&quot;time&quot;:{&quot;type&quot;:&quot;object&quot;}}}}}" SchemaFormat="JSON">
+              <GeneratingPSM>DependencyLibrary[LibraryName:spring-boot-starter-actuator]</GeneratingPSM>
+            </messages>
+            <GeneratingPSM>DependencyLibrary[LibraryName:spring-boot-starter-actuator]</GeneratingPSM>
+          </destinations>
+          <destinations xsi:type="PIM:Endpoint" Environment="COMPILE" RequestURI="GET /actuator/metrics">
+            <messages MessageType="RESPONSE" BodySchema="{&quot;type&quot;:&quot;object&quot;,&quot;properties&quot;:{&quot;Datacenter&quot;:{&quot;type&quot;:&quot;string&quot;},&quot;ID&quot;:{&quot;type&quot;:&quot;string&quot;},&quot;Node&quot;:{&quot;type&quot;:&quot;string&quot;},&quot;Address&quot;:{&quot;type&quot;:&quot;string&quot;},&quot;TaggedAddresses&quot;:{&quot;type&quot;:&quot;object&quot;,&quot;properties&quot;:{&quot;lan&quot;:{&quot;type&quot;:&quot;string&quot;},&quot;wan&quot;:{&quot;type&quot;:&quot;string&quot;}}},&quot;NodeMeta&quot;:{&quot;type&quot;:&quot;object&quot;,&quot;properties&quot;:{&quot;somekey&quot;:{&quot;type&quot;:&quot;string&quot;}}},&quot;Service&quot;:{&quot;type&quot;:&quot;object&quot;,&quot;properties&quot;:{&quot;ID&quot;:{&quot;type&quot;:&quot;string&quot;},&quot;Service&quot;:{&quot;type&quot;:&quot;string&quot;},&quot;Tags&quot;:{&quot;type&quot;:&quot;array&quot;,&quot;items&quot;:{&quot;type&quot;:&quot;string&quot;}},&quot;Address&quot;:{&quot;type&quot;:&quot;string&quot;},&quot;TaggedAddresses&quot;:{&quot;type&quot;:&quot;object&quot;,&quot;properties&quot;:{&quot;lan&quot;:{&quot;type&quot;:&quot;object&quot;,&quot;properties&quot;:{&quot;address&quot;:{&quot;type&quot;:&quot;string&quot;},&quot;port&quot;:{&quot;type&quot;:&quot;integer&quot;}}},&quot;wan&quot;:{&quot;type&quot;:&quot;object&quot;,&quot;properties&quot;:{&quot;address&quot;:{&quot;type&quot;:&quot;string&quot;},&quot;port&quot;:{&quot;type&quot;:&quot;integer&quot;}}}}},&quot;Meta&quot;:{&quot;type&quot;:&quot;object&quot;},&quot;Port&quot;:{&quot;type&quot;:&quot;integer&quot;}}},&quot;Check&quot;:{&quot;type&quot;:&quot;object&quot;},&quot;SkipNodeUpdate&quot;:{&quot;type&quot;:&quot;boolean&quot;}}}" SchemaFormat="JSON">
+              <GeneratingPSM>DependencyLibrary[LibraryName:spring-boot-starter-actuator]</GeneratingPSM>
+            </messages>
+            <GeneratingPSM>DependencyLibrary[LibraryName:spring-boot-starter-actuator]</GeneratingPSM>
+          </destinations>
+          <destinations xsi:type="PIM:Endpoint" Environment="COMPILE" RequestURI="POST /actuator/shutdown">
+            <messages MessageType="RESPONSE" BodySchema="{&quot;type&quot;:&quot;object&quot;,&quot;properties&quot;:{&quot;message&quot;:{&quot;type&quot;:&quot;string&quot;}}}" SchemaFormat="JSON">
+              <GeneratingPSM>DependencyLibrary[LibraryName:spring-boot-starter-actuator]</GeneratingPSM>
+            </messages>
+            <GeneratingPSM>DependencyLibrary[LibraryName:spring-boot-starter-actuator]</GeneratingPSM>
+          </destinations>
+          <destinations xsi:type="PIM:Endpoint" Environment="DOCKER" RequestURI="POST /actuator/refresh">
+            <GeneratingPSM>DependencyLibrary[LibraryName:spring-cloud-config-client]</GeneratingPSM>
+            <GeneratingPSM>ConfigurationProperty[FullyQualifiedPropertyName:spring.cloud.config.uri]</GeneratingPSM>
+          </destinations>
+          <GeneratingPSM>DockerContainerDefinition[ContainerName:authserver,ImageField:idugalic/authserver, GeneratesLogs:false]</GeneratingPSM>
+          <GeneratingPSM>MicroserviceProject[ProjectArtifactId:authserver]</GeneratingPSM>
+        </interface>
+        <dependencies ProviderName="configserver" ProviderDestination="Endpoint[RequestURI:GET /authserver/default]" Environment="DOCKER">
+          <GeneratingPSM>ConfigurationProperty[FullyQualifiedPropertyName:spring.cloud.config.uri]</GeneratingPSM>
+        </dependencies>
+        <GeneratingPSM>DockerContainerDefinition[ContainerName:authserver,ImageField:idugalic/authserver, GeneratesLogs:false]</GeneratingPSM>
+        <GeneratingPSM>MicroserviceProject[ProjectArtifactId:authserver]</GeneratingPSM>
+      </microservices>
+      <microservices xsi:type="PIM:FunctionalMicroservice" MicroserviceName="adminserver">
+        <container ContainerName="adminserver">
+          <GeneratingPSM>DockerContainerDefinition[ContainerName:adminserver,ImageField:idugalic/adminserver, GeneratesLogs:false]</GeneratingPSM>
+          <GeneratingPSM>MicroserviceProject[ProjectArtifactId:adminserver]</GeneratingPSM>
+        </container>
+        <components xsi:type="PIM:InfrastructureClientComponent" Category="Development_Pattern_Centralized_Configuration" Technology="Spring Cloud Config" Environment="COMPILE">
+          <GeneratingPSM>DependencyLibrary[LibraryName:spring-cloud-config-client]</GeneratingPSM>
+          <GeneratingPSM>ConfigurationProperty[FullyQualifiedPropertyName:spring.cloud.config.uri]</GeneratingPSM>
+        </components>
+        <components xsi:type="PIM:InfrastructureClientComponent" Category="Service_Routing_Pattern_Registry_and_Discovery" Technology="Eureka" Environment="COMPILE">
+          <GeneratingPSM>DependencyLibrary[LibraryName:spring-cloud-starter-eureka]</GeneratingPSM>
+          <GeneratingPSM>JavaAnnotation[AnnotationName:EnableDiscoveryClient]</GeneratingPSM>
+        </components>
+        <components Category="Client_Resiliency_Pattern_Load_Balancer" Technology="Ribbon" Environment="COMPILE">
+          <GeneratingPSM>DependencyLibrary[LibraryName:spring-cloud-starter-eureka]</GeneratingPSM>
+        </components>
+        <interface ServerURL="[http|https]://adminserver:&lt;port-number>">
+          <GeneratingPSM>DockerContainerDefinition[ContainerName:adminserver,ImageField:idugalic/adminserver, GeneratesLogs:false]</GeneratingPSM>
+          <GeneratingPSM>MicroserviceProject[ProjectArtifactId:adminserver]</GeneratingPSM>
+        </interface>
+        <dependencies ProviderName="configserver" ProviderDestination="Endpoint[RequestURI:GET /adminserver/default]" Environment="DOCKER">
+          <GeneratingPSM>ConfigurationProperty[FullyQualifiedPropertyName:spring.cloud.config.uri]</GeneratingPSM>
+        </dependencies>
+        <GeneratingPSM>DockerContainerDefinition[ContainerName:adminserver,ImageField:idugalic/adminserver, GeneratesLogs:false]</GeneratingPSM>
+        <GeneratingPSM>MicroserviceProject[ProjectArtifactId:adminserver]</GeneratingPSM>
+      </microservices>
+      <microservices xsi:type="PIM:InfrastructureMicroservice" MicroserviceName="circuit-breaker">
+        <container ContainerName="circuit-breaker">
+          <GeneratingPSM>DockerContainerDefinition[ContainerName:circuit-breaker,ImageField:idugalic/circuit-breaker, GeneratesLogs:false]</GeneratingPSM>
+          <GeneratingPSM>MicroserviceProject[ProjectArtifactId:circuit-breaker]</GeneratingPSM>
+        </container>
+        <components xsi:type="PIM:InfrastructureServerComponent" Category="Observability_Pattern_Circuit_Breaker_Metrics_Monitoring" Technology="Hystrix" Environment="COMPILE">
+          <GeneratingPSM>DependencyLibrary[LibraryName:spring-cloud-starter-hystrix-dashboard]</GeneratingPSM>
+          <GeneratingPSM>JavaAnnotation[AnnotationName:EnableHystrixDashboard]</GeneratingPSM>
+        </components>
+        <components xsi:type="PIM:InfrastructureClientComponent" Category="Development_Pattern_Centralized_Configuration" Technology="Spring Cloud Config" Environment="COMPILE">
+          <GeneratingPSM>DependencyLibrary[LibraryName:spring-cloud-config-client]</GeneratingPSM>
+          <GeneratingPSM>ConfigurationProperty[FullyQualifiedPropertyName:spring.cloud.config.uri]</GeneratingPSM>
+        </components>
+        <interface ServerURL="[http|https]://circuit-breaker:&lt;port-number>">
+          <destinations xsi:type="PIM:Endpoint" Environment="COMPILE" RequestURI="GET /hystrix">
+            <GeneratingPSM>DependencyLibrary[LibraryName:spring-cloud-starter-hystrix-dashboard]</GeneratingPSM>
+            <GeneratingPSM>JavaAnnotation[AnnotationName:EnableHystrixDashboard]</GeneratingPSM>
+          </destinations>
+          <GeneratingPSM>DockerContainerDefinition[ContainerName:circuit-breaker,ImageField:idugalic/circuit-breaker, GeneratesLogs:false]</GeneratingPSM>
+          <GeneratingPSM>MicroserviceProject[ProjectArtifactId:circuit-breaker]</GeneratingPSM>
+        </interface>
+        <dependencies ProviderName="configserver" ProviderDestination="Endpoint[RequestURI:GET /circuit-breaker/default]" Environment="DOCKER">
+          <GeneratingPSM>ConfigurationProperty[FullyQualifiedPropertyName:spring.cloud.config.uri]</GeneratingPSM>
+        </dependencies>
+        <dependencies ProviderName="api-gateway" ProviderDestination="Endpoint[RequestURI:GET /actuator/hystrix.stream]" Environment="COMPILE">
+          <GeneratingPSM>DockerContainerDefinition[ContainerName:circuit-breaker,ImageField:idugalic/circuit-breaker, GeneratesLogs:false]</GeneratingPSM>
+          <GeneratingPSM>MicroserviceProject[ProjectArtifactId:circuit-breaker]</GeneratingPSM>
+        </dependencies>
+        <GeneratingPSM>DockerContainerDefinition[ContainerName:circuit-breaker,ImageField:idugalic/circuit-breaker, GeneratesLogs:false]</GeneratingPSM>
+        <GeneratingPSM>MicroserviceProject[ProjectArtifactId:circuit-breaker]</GeneratingPSM>
+      </microservices>
+      <microservices xsi:type="PIM:FunctionalMicroservice" MicroserviceName="query-side-blog">
+        <container ContainerName="query-side-blog">
+          <GeneratingPSM>DockerContainerDefinition[ContainerName:query-side-blog,ImageField:idugalic/query-side-blog-service, GeneratesLogs:false]</GeneratingPSM>
+          <GeneratingPSM>MicroserviceProject[ProjectArtifactId:query-side-blog]</GeneratingPSM>
+        </container>
+        <components Category="Development_Pattern_Data_Persistence" Technology="HSQLDB" Environment="RUNTIME">
+          <GeneratingPSM>DependencyLibrary[LibraryName:hsqldb]</GeneratingPSM>
+        </components>
+        <components xsi:type="PIM:InfrastructureClientComponent" Category="Development_Pattern_Centralized_Configuration" Technology="Spring Cloud Config" Environment="COMPILE">
+          <GeneratingPSM>ConfigurationProperty[FullyQualifiedPropertyName:spring.cloud.config.uri]</GeneratingPSM>
+        </components>
+        <components xsi:type="PIM:InfrastructureClientComponent" Category="Service_Routing_Pattern_Registry_and_Discovery" Environment="COMPILE">
+          <GeneratingPSM>JavaAnnotation[AnnotationName:EnableDiscoveryClient]</GeneratingPSM>
+        </components>
+        <components xsi:type="PIM:InfrastructureClientComponent" Category="Security_Pattern_Authorization_and_Authentication" Technology="Spring Cloud OAuth2" Environment="COMPILE">
+          <GeneratingPSM>JavaAnnotation[AnnotationName:EnableResourceServer]</GeneratingPSM>
+        </components>
+        <interface ServerURL="[http|https]://query-side-blog:&lt;port-number>">
+          <destinations xsi:type="PIM:Endpoint" Environment="COMPILE" RequestURI="GET /blogposts">
+            <GeneratingPSM>JavaAnnotation[AnnotationName:RepositoryRestResource]</GeneratingPSM>
+          </destinations>
+          <destinations xsi:type="PIM:Endpoint" Environment="COMPILE" RequestURI="GET /blogposts/search/findByDraftTrue">
+            <messages MessageType="RESPONSE" BodySchema="" SchemaFormat="JSON">
+              <GeneratingPSM>JavaMethod[ElementIdentifier:findByDraftTrue()]</GeneratingPSM>
+            </messages>
+            <GeneratingPSM>JavaMethod[ElementIdentifier:findByDraftTrue()]</GeneratingPSM>
+            <operation OperationName="findByDraftTrue()" OperationDescription="An operation with name findByDraftTrue() that responds with object Page&lt;BlogPost>">
+              <GeneratingPSM>JavaMethod[ElementIdentifier:findByDraftTrue()]</GeneratingPSM>
+            </operation>
+          </destinations>
+          <destinations xsi:type="PIM:Endpoint" Environment="COMPILE" RequestURI="GET /blogposts/search/findByCategoryAndDraftFalse{?category}">
+            <messages MessageType="RESPONSE" BodySchema="" SchemaFormat="JSON">
+              <GeneratingPSM>JavaMethod[ElementIdentifier:findByCategoryAndDraftFalse()]</GeneratingPSM>
+            </messages>
+            <GeneratingPSM>JavaMethod[ElementIdentifier:findByCategoryAndDraftFalse()]</GeneratingPSM>
+            <operation OperationName="findByCategoryAndDraftFalse()" OperationDescription="An operation with name findByCategoryAndDraftFalse() that responds with object Page&lt;BlogPost>">
+              <GeneratingPSM>JavaMethod[ElementIdentifier:findByCategoryAndDraftFalse()]</GeneratingPSM>
+            </operation>
+          </destinations>
+          <destinations xsi:type="PIM:Endpoint" Environment="COMPILE" RequestURI="GET /blogposts/search/findByDraftFalseAndPublishAtBeforeOrderByPublishAtDesc{?publishedBefore}">
+            <messages MessageType="RESPONSE" BodySchema="" SchemaFormat="JSON">
+              <GeneratingPSM>JavaMethod[ElementIdentifier:findByDraftFalseAndPublishAtBeforeOrderByPublishAtDesc()]</GeneratingPSM>
+            </messages>
+            <GeneratingPSM>JavaMethod[ElementIdentifier:findByDraftFalseAndPublishAtBeforeOrderByPublishAtDesc()]</GeneratingPSM>
+            <operation OperationName="findByDraftFalseAndPublishAtBeforeOrderByPublishAtDesc()" OperationDescription="An operation with name findByDraftFalseAndPublishAtBeforeOrderByPublishAtDesc() that responds with object Page&lt;BlogPost>">
+              <GeneratingPSM>JavaMethod[ElementIdentifier:findByDraftFalseAndPublishAtBeforeOrderByPublishAtDesc()]</GeneratingPSM>
+            </operation>
+          </destinations>
+          <destinations xsi:type="PIM:Endpoint" Environment="COMPILE" RequestURI="GET /blogposts/search/findByCategoryAndDraftFalseAndPublishAtBefore{?category,publishedBefore}">
+            <messages MessageType="RESPONSE" BodySchema="" SchemaFormat="JSON">
+              <GeneratingPSM>JavaMethod[ElementIdentifier:findByCategoryAndDraftFalseAndPublishAtBefore()]</GeneratingPSM>
+            </messages>
+            <GeneratingPSM>JavaMethod[ElementIdentifier:findByCategoryAndDraftFalseAndPublishAtBefore()]</GeneratingPSM>
+            <operation OperationName="findByCategoryAndDraftFalseAndPublishAtBefore()" OperationDescription="An operation with name findByCategoryAndDraftFalseAndPublishAtBefore() that responds with object Page&lt;BlogPost>">
+              <GeneratingPSM>JavaMethod[ElementIdentifier:findByCategoryAndDraftFalseAndPublishAtBefore()]</GeneratingPSM>
+            </operation>
+          </destinations>
+          <destinations xsi:type="PIM:Endpoint" Environment="COMPILE" RequestURI="GET /blogposts/search/findByBroadcastAndDraftFalseAndPublishAtBefore{?broadcast,publishedBefore}">
+            <messages MessageType="RESPONSE" BodySchema="" SchemaFormat="JSON">
+              <GeneratingPSM>JavaMethod[ElementIdentifier:findByBroadcastAndDraftFalseAndPublishAtBefore()]</GeneratingPSM>
+            </messages>
+            <GeneratingPSM>JavaMethod[ElementIdentifier:findByBroadcastAndDraftFalseAndPublishAtBefore()]</GeneratingPSM>
+            <operation OperationName="findByBroadcastAndDraftFalseAndPublishAtBefore()" OperationDescription="An operation with name findByBroadcastAndDraftFalseAndPublishAtBefore() that responds with object Page&lt;BlogPost>">
+              <GeneratingPSM>JavaMethod[ElementIdentifier:findByBroadcastAndDraftFalseAndPublishAtBefore()]</GeneratingPSM>
+            </operation>
+          </destinations>
+          <destinations xsi:type="PIM:Endpoint" Environment="COMPILE" RequestURI="GET /blogposts/search/findByDraftFalseAndPublishAtAfter{?now}">
+            <messages MessageType="RESPONSE" BodySchema="" SchemaFormat="JSON">
+              <GeneratingPSM>JavaMethod[ElementIdentifier:findByDraftFalseAndPublishAtAfter()]</GeneratingPSM>
+            </messages>
+            <GeneratingPSM>JavaMethod[ElementIdentifier:findByDraftFalseAndPublishAtAfter()]</GeneratingPSM>
+            <operation OperationName="findByDraftFalseAndPublishAtAfter()" OperationDescription="An operation with name findByDraftFalseAndPublishAtAfter() that responds with object Page&lt;BlogPost>">
+              <GeneratingPSM>JavaMethod[ElementIdentifier:findByDraftFalseAndPublishAtAfter()]</GeneratingPSM>
+            </operation>
+          </destinations>
+          <destinations xsi:type="PIM:Endpoint" Environment="COMPILE" RequestURI="GET /blogposts/search/findByDraftFalseAndAuthorIdAndPublishAtBeforeOrderByPublishAtDesc{?authorId,publishedBefore}">
+            <messages MessageType="RESPONSE" BodySchema="" SchemaFormat="JSON">
+              <GeneratingPSM>JavaMethod[ElementIdentifier:findByDraftFalseAndAuthorIdAndPublishAtBeforeOrderByPublishAtDesc()]</GeneratingPSM>
+            </messages>
+            <GeneratingPSM>JavaMethod[ElementIdentifier:findByDraftFalseAndAuthorIdAndPublishAtBeforeOrderByPublishAtDesc()]</GeneratingPSM>
+            <operation OperationName="findByDraftFalseAndAuthorIdAndPublishAtBeforeOrderByPublishAtDesc()" OperationDescription="An operation with name findByDraftFalseAndAuthorIdAndPublishAtBeforeOrderByPublishAtDesc() that responds with object Page&lt;BlogPost>">
+              <GeneratingPSM>JavaMethod[ElementIdentifier:findByDraftFalseAndAuthorIdAndPublishAtBeforeOrderByPublishAtDesc()]</GeneratingPSM>
+            </operation>
+          </destinations>
+          <destinations xsi:type="PIM:Endpoint" Environment="COMPILE" RequestURI="GET /blogposts/search/findByDateYearMonthDay{?year,month,day}">
+            <messages MessageType="RESPONSE" BodySchema="" SchemaFormat="JSON">
+              <GeneratingPSM>JavaMethod[ElementIdentifier:findByDateYearMonthDay()]</GeneratingPSM>
+            </messages>
+            <GeneratingPSM>JavaMethod[ElementIdentifier:findByDateYearMonthDay()]</GeneratingPSM>
+            <operation OperationName="findByDateYearMonthDay()" OperationDescription="An operation with name findByDateYearMonthDay() that responds with object Page&lt;BlogPost>">
+              <GeneratingPSM>JavaMethod[ElementIdentifier:findByDateYearMonthDay()]</GeneratingPSM>
+            </operation>
+          </destinations>
+          <destinations xsi:type="PIM:Endpoint" Environment="COMPILE" RequestURI="GET /blogposts/search/findByDateYearMonth{?year,month}">
+            <messages MessageType="RESPONSE" BodySchema="" SchemaFormat="JSON">
+              <GeneratingPSM>JavaMethod[ElementIdentifier:findByDateYearMonth()]</GeneratingPSM>
+            </messages>
+            <GeneratingPSM>JavaMethod[ElementIdentifier:findByDateYearMonth()]</GeneratingPSM>
+            <operation OperationName="findByDateYearMonth()" OperationDescription="An operation with name findByDateYearMonth() that responds with object Page&lt;BlogPost>">
+              <GeneratingPSM>JavaMethod[ElementIdentifier:findByDateYearMonth()]</GeneratingPSM>
+            </operation>
+          </destinations>
+          <destinations xsi:type="PIM:Endpoint" Environment="COMPILE" RequestURI="GET /blogposts/search/findByDateYear{?year}">
+            <messages MessageType="RESPONSE" BodySchema="" SchemaFormat="JSON">
+              <GeneratingPSM>JavaMethod[ElementIdentifier:findByDateYear()]</GeneratingPSM>
+            </messages>
+            <GeneratingPSM>JavaMethod[ElementIdentifier:findByDateYear()]</GeneratingPSM>
+            <operation OperationName="findByDateYear()" OperationDescription="An operation with name findByDateYear() that responds with object Page&lt;BlogPost>">
+              <GeneratingPSM>JavaMethod[ElementIdentifier:findByDateYear()]</GeneratingPSM>
+            </operation>
+          </destinations>
+          <destinations xsi:type="PIM:Endpoint" Environment="COMPILE" RequestURI="GET /blogposts/search/findByTitle{?title}">
+            <messages MessageType="RESPONSE" BodySchema="" SchemaFormat="JSON">
+              <GeneratingPSM>JavaMethod[ElementIdentifier:findByTitle()]</GeneratingPSM>
+            </messages>
+            <GeneratingPSM>JavaMethod[ElementIdentifier:findByTitle()]</GeneratingPSM>
+            <operation OperationName="findByTitle()" OperationDescription="An operation with name findByTitle() that responds with object BlogPost">
+              <GeneratingPSM>JavaMethod[ElementIdentifier:findByTitle()]</GeneratingPSM>
+            </operation>
+          </destinations>
+          <destinations xsi:type="PIM:Endpoint" Environment="COMPILE" RequestURI="GET /blogposts/search/findByPublicSlugAndDraftFalseAndPublishAtBefore{?publicSlug,now}">
+            <messages MessageType="RESPONSE" BodySchema="" SchemaFormat="JSON">
+              <GeneratingPSM>JavaMethod[ElementIdentifier:findByPublicSlugAndDraftFalseAndPublishAtBefore()]</GeneratingPSM>
+            </messages>
+            <GeneratingPSM>JavaMethod[ElementIdentifier:findByPublicSlugAndDraftFalseAndPublishAtBefore()]</GeneratingPSM>
+            <operation OperationName="findByPublicSlugAndDraftFalseAndPublishAtBefore()" OperationDescription="An operation with name findByPublicSlugAndDraftFalseAndPublishAtBefore() that responds with object BlogPost">
+              <GeneratingPSM>JavaMethod[ElementIdentifier:findByPublicSlugAndDraftFalseAndPublishAtBefore()]</GeneratingPSM>
+            </operation>
+          </destinations>
+          <GeneratingPSM>DockerContainerDefinition[ContainerName:query-side-blog,ImageField:idugalic/query-side-blog-service, GeneratesLogs:false]</GeneratingPSM>
+          <GeneratingPSM>MicroserviceProject[ProjectArtifactId:query-side-blog]</GeneratingPSM>
+        </interface>
+        <dependencies ProviderName="configserver" ProviderDestination="Endpoint[RequestURI:GET /query-side-blog/default]" Environment="DOCKER">
+          <GeneratingPSM>ConfigurationProperty[FullyQualifiedPropertyName:spring.cloud.config.uri]</GeneratingPSM>
+        </dependencies>
+        <GeneratingPSM>DockerContainerDefinition[ContainerName:query-side-blog,ImageField:idugalic/query-side-blog-service, GeneratesLogs:false]</GeneratingPSM>
+        <GeneratingPSM>MicroserviceProject[ProjectArtifactId:query-side-blog]</GeneratingPSM>
+      </microservices>
+      <microservices xsi:type="PIM:FunctionalMicroservice" MicroserviceName="command-side-blog">
+        <container ContainerName="command-side-blog">
+          <GeneratingPSM>DockerContainerDefinition[ContainerName:command-side-blog,ImageField:idugalic/command-side-blog-service, GeneratesLogs:false]</GeneratingPSM>
+          <GeneratingPSM>MicroserviceProject[ProjectArtifactId:command-side-blog]</GeneratingPSM>
+        </container>
+        <components Category="Development_Pattern_Data_Persistence" Technology="HSQLDB" Environment="RUNTIME">
+          <GeneratingPSM>DependencyLibrary[LibraryName:hsqldb]</GeneratingPSM>
+        </components>
+        <components Category="Security_Pattern_Web_Security" Technology="Spring Security" Environment="COMPILE">
+          <GeneratingPSM>DependencyLibrary[LibraryName:spring-cloud-starter-security]</GeneratingPSM>
+        </components>
+        <components xsi:type="PIM:InfrastructureClientComponent" Category="Development_Pattern_Centralized_Configuration" Technology="Spring Cloud Config" Environment="COMPILE">
+          <GeneratingPSM>ConfigurationProperty[FullyQualifiedPropertyName:spring.cloud.config.uri]</GeneratingPSM>
+        </components>
+        <components xsi:type="PIM:InfrastructureClientComponent" Category="Service_Routing_Pattern_Registry_and_Discovery" Environment="COMPILE">
+          <GeneratingPSM>JavaAnnotation[AnnotationName:EnableDiscoveryClient]</GeneratingPSM>
+        </components>
+        <components xsi:type="PIM:InfrastructureClientComponent" Category="Security_Pattern_Authorization_and_Authentication" Technology="Spring Cloud OAuth2" Environment="COMPILE">
+          <GeneratingPSM>JavaAnnotation[AnnotationName:EnableResourceServer]</GeneratingPSM>
+        </components>
+        <interface ServerURL="[http|https]://command-side-blog:&lt;port-number>">
+          <destinations xsi:type="PIM:Endpoint" Environment="COMPILE" RequestURI="POST /blogpostcommands">
+            <messages MessageType="REQUEST" BodySchema="" SchemaFormat="JSON">
+              <GeneratingPSM>JavaMethod[ElementIdentifier:create()]</GeneratingPSM>
+            </messages>
+            <GeneratingPSM>JavaMethod[ElementIdentifier:create()]</GeneratingPSM>
+            <operation OperationName="create()" OperationDescription="An operation with name create() that requests object CreateBlogPostRequest and responds with HttpStatus.CREATED">
+              <GeneratingPSM>JavaMethod[ElementIdentifier:create()]</GeneratingPSM>
+            </operation>
+          </destinations>
+          <destinations xsi:type="PIM:Endpoint" Environment="COMPILE" RequestURI="POST /blogpostcommands/{id}/publishcommand">
+            <messages MessageType="REQUEST" BodySchema="" SchemaFormat="JSON">
+              <GeneratingPSM>JavaMethod[ElementIdentifier:publish()]</GeneratingPSM>
+            </messages>
+            <GeneratingPSM>JavaMethod[ElementIdentifier:publish()]</GeneratingPSM>
+            <operation OperationName="publish()" OperationDescription="An operation with name publish() that requests object PublishBlogPostRequest and responds with HttpStatus.ACCEPTED">
+              <GeneratingPSM>JavaMethod[ElementIdentifier:publish()]</GeneratingPSM>
+            </operation>
+          </destinations>
+          <GeneratingPSM>DockerContainerDefinition[ContainerName:command-side-blog,ImageField:idugalic/command-side-blog-service, GeneratesLogs:false]</GeneratingPSM>
+          <GeneratingPSM>MicroserviceProject[ProjectArtifactId:command-side-blog]</GeneratingPSM>
+        </interface>
+        <dependencies ProviderName="configserver" ProviderDestination="Endpoint[RequestURI:GET /command-side-blog/default]" Environment="DOCKER">
+          <GeneratingPSM>ConfigurationProperty[FullyQualifiedPropertyName:spring.cloud.config.uri]</GeneratingPSM>
+        </dependencies>
+        <GeneratingPSM>DockerContainerDefinition[ContainerName:command-side-blog,ImageField:idugalic/command-side-blog-service, GeneratesLogs:false]</GeneratingPSM>
+        <GeneratingPSM>MicroserviceProject[ProjectArtifactId:command-side-blog]</GeneratingPSM>
+      </microservices>
+      <microservices xsi:type="PIM:FunctionalMicroservice" MicroserviceName="query-side-project">
+        <container ContainerName="query-side-project">
+          <GeneratingPSM>DockerContainerDefinition[ContainerName:query-side-project,ImageField:idugalic/query-side-project-service, GeneratesLogs:false]</GeneratingPSM>
+          <GeneratingPSM>MicroserviceProject[ProjectArtifactId:query-side-project]</GeneratingPSM>
+        </container>
+        <components Category="Development_Pattern_Data_Persistence" Technology="HSQLDB" Environment="RUNTIME">
+          <GeneratingPSM>DependencyLibrary[LibraryName:hsqldb]</GeneratingPSM>
+        </components>
+        <components xsi:type="PIM:InfrastructureClientComponent" Category="Development_Pattern_Centralized_Configuration" Technology="Spring Cloud Config" Environment="COMPILE">
+          <GeneratingPSM>ConfigurationProperty[FullyQualifiedPropertyName:spring.cloud.config.uri]</GeneratingPSM>
+        </components>
+        <components xsi:type="PIM:InfrastructureClientComponent" Category="Security_Pattern_Authorization_and_Authentication" Technology="Spring Cloud OAuth2" Environment="COMPILE">
+          <GeneratingPSM>JavaAnnotation[AnnotationName:EnableResourceServer]</GeneratingPSM>
+        </components>
+        <components xsi:type="PIM:InfrastructureClientComponent" Category="Service_Routing_Pattern_Registry_and_Discovery" Environment="COMPILE">
+          <GeneratingPSM>JavaAnnotation[AnnotationName:EnableDiscoveryClient]</GeneratingPSM>
+        </components>
+        <interface ServerURL="[http|https]://query-side-project:&lt;port-number>">
+          <destinations xsi:type="PIM:Endpoint" Environment="COMPILE" RequestURI="GET /projects">
+            <GeneratingPSM>JavaAnnotation[AnnotationName:RepositoryRestResource]</GeneratingPSM>
+          </destinations>
+          <GeneratingPSM>DockerContainerDefinition[ContainerName:query-side-project,ImageField:idugalic/query-side-project-service, GeneratesLogs:false]</GeneratingPSM>
+          <GeneratingPSM>MicroserviceProject[ProjectArtifactId:query-side-project]</GeneratingPSM>
+        </interface>
+        <dependencies ProviderName="configserver" ProviderDestination="Endpoint[RequestURI:GET /query-side-project/default]" Environment="DOCKER">
+          <GeneratingPSM>ConfigurationProperty[FullyQualifiedPropertyName:spring.cloud.config.uri]</GeneratingPSM>
+        </dependencies>
+        <GeneratingPSM>DockerContainerDefinition[ContainerName:query-side-project,ImageField:idugalic/query-side-project-service, GeneratesLogs:false]</GeneratingPSM>
+        <GeneratingPSM>MicroserviceProject[ProjectArtifactId:query-side-project]</GeneratingPSM>
+      </microservices>
+      <microservices xsi:type="PIM:FunctionalMicroservice" MicroserviceName="command-side-project">
+        <container ContainerName="command-side-project">
+          <GeneratingPSM>DockerContainerDefinition[ContainerName:command-side-project,ImageField:idugalic/command-side-project-service, GeneratesLogs:false]</GeneratingPSM>
+          <GeneratingPSM>MicroserviceProject[ProjectArtifactId:command-side-project]</GeneratingPSM>
+        </container>
+        <components Category="Development_Pattern_Data_Persistence" Technology="HSQLDB" Environment="RUNTIME">
+          <GeneratingPSM>DependencyLibrary[LibraryName:hsqldb]</GeneratingPSM>
+        </components>
+        <components Category="Security_Pattern_Web_Security" Technology="Spring Security" Environment="COMPILE">
+          <GeneratingPSM>DependencyLibrary[LibraryName:spring-cloud-starter-security]</GeneratingPSM>
+        </components>
+        <components xsi:type="PIM:InfrastructureClientComponent" Category="Development_Pattern_Centralized_Configuration" Technology="Spring Cloud Config" Environment="COMPILE">
+          <GeneratingPSM>ConfigurationProperty[FullyQualifiedPropertyName:spring.cloud.config.uri]</GeneratingPSM>
+        </components>
+        <components xsi:type="PIM:InfrastructureClientComponent" Category="Service_Routing_Pattern_Registry_and_Discovery" Environment="COMPILE">
+          <GeneratingPSM>JavaAnnotation[AnnotationName:EnableDiscoveryClient]</GeneratingPSM>
+        </components>
+        <components xsi:type="PIM:InfrastructureClientComponent" Category="Security_Pattern_Authorization_and_Authentication" Technology="Spring Cloud OAuth2" Environment="COMPILE">
+          <GeneratingPSM>JavaAnnotation[AnnotationName:EnableResourceServer]</GeneratingPSM>
+        </components>
+        <interface ServerURL="[http|https]://command-side-project:&lt;port-number>">
+          <destinations xsi:type="PIM:Endpoint" Environment="COMPILE" RequestURI="POST /projectcommands/{id}/updatecommand">
+            <messages MessageType="REQUEST" BodySchema="" SchemaFormat="JSON">
+              <GeneratingPSM>JavaMethod[ElementIdentifier:update()]</GeneratingPSM>
+            </messages>
+            <GeneratingPSM>JavaMethod[ElementIdentifier:update()]</GeneratingPSM>
+            <operation OperationName="update()" OperationDescription="An operation with name update() that requests object UpdateProjectRequest and responds with HttpStatus.ACCEPTED">
+              <GeneratingPSM>JavaMethod[ElementIdentifier:update()]</GeneratingPSM>
+            </operation>
+          </destinations>
+          <destinations xsi:type="PIM:Endpoint" Environment="COMPILE" RequestURI="POST /projectcommands">
+            <messages MessageType="REQUEST" BodySchema="" SchemaFormat="JSON">
+              <GeneratingPSM>JavaMethod[ElementIdentifier:create()]</GeneratingPSM>
+            </messages>
+            <GeneratingPSM>JavaMethod[ElementIdentifier:create()]</GeneratingPSM>
+            <operation OperationName="create()" OperationDescription="An operation with name create() that requests object CreateProjectRequest and responds with HttpStatus.CREATED">
+              <GeneratingPSM>JavaMethod[ElementIdentifier:create()]</GeneratingPSM>
+            </operation>
+          </destinations>
+          <GeneratingPSM>DockerContainerDefinition[ContainerName:command-side-project,ImageField:idugalic/command-side-project-service, GeneratesLogs:false]</GeneratingPSM>
+          <GeneratingPSM>MicroserviceProject[ProjectArtifactId:command-side-project]</GeneratingPSM>
+        </interface>
+        <dependencies ProviderName="configserver" ProviderDestination="Endpoint[RequestURI:GET /command-side-project/default]" Environment="DOCKER">
+          <GeneratingPSM>ConfigurationProperty[FullyQualifiedPropertyName:spring.cloud.config.uri]</GeneratingPSM>
+        </dependencies>
+        <GeneratingPSM>DockerContainerDefinition[ContainerName:command-side-project,ImageField:idugalic/command-side-project-service, GeneratesLogs:false]</GeneratingPSM>
+        <GeneratingPSM>MicroserviceProject[ProjectArtifactId:command-side-project]</GeneratingPSM>
+      </microservices>
+      <microservices xsi:type="PIM:InfrastructureMicroservice" MicroserviceName="api-gateway">
+        <container ContainerName="api-gateway">
+          <GeneratingPSM>DockerContainerDefinition[ContainerName:api-gateway,ImageField:idugalic/api-gateway, GeneratesLogs:false]</GeneratingPSM>
+          <GeneratingPSM>MicroserviceProject[ProjectArtifactId:api-gateway]</GeneratingPSM>
+        </container>
+        <components xsi:type="PIM:InfrastructureClientComponent" Category="Development_Pattern_Asynchronous_Message_Brokering" Technology="RabbitMQ" Environment="COMPILE">
+          <GeneratingPSM>DependencyLibrary[LibraryName:spring-boot-starter-amqp]</GeneratingPSM>
+        </components>
+        <components Category="Observability_Pattern_Application_Metrics_Generation" Technology="Actuator" Environment="COMPILE">
+          <GeneratingPSM>DependencyLibrary[LibraryName:spring-boot-starter-actuator]</GeneratingPSM>
+        </components>
+        <components Category="Development_Pattern_Data_Persistence" Technology="HSQLDB" Environment="RUNTIME">
+          <GeneratingPSM>DependencyLibrary[LibraryName:hsqldb]</GeneratingPSM>
+        </components>
+        <components Category="Security_Pattern_Web_Security" Technology="Spring Security" Environment="COMPILE">
+          <GeneratingPSM>DependencyLibrary[LibraryName:spring-cloud-starter-security]</GeneratingPSM>
+        </components>
+        <components Category="Security_Pattern_Authorization_and_Authentication" Technology="Spring Cloud OAuth2" Environment="COMPILE">
+          <GeneratingPSM>DependencyLibrary[LibraryName:spring-security-oauth2]</GeneratingPSM>
+        </components>
+        <components xsi:type="PIM:InfrastructureClientComponent" Category="Service_Routing_Pattern_Registry_and_Discovery" Technology="Eureka" Environment="COMPILE">
+          <GeneratingPSM>DependencyLibrary[LibraryName:spring-cloud-starter-eureka]</GeneratingPSM>
+          <GeneratingPSM>JavaAnnotation[AnnotationName:EnableDiscoveryClient]</GeneratingPSM>
+        </components>
+        <components Category="Client_Resiliency_Pattern_Load_Balancer" Technology="Ribbon" Environment="COMPILE">
+          <GeneratingPSM>DependencyLibrary[LibraryName:spring-cloud-starter-eureka]</GeneratingPSM>
+        </components>
+        <components xsi:type="PIM:InfrastructureClientComponent" Category="Development_Pattern_Centralized_Configuration" Technology="Spring Cloud Config" Environment="COMPILE">
+          <GeneratingPSM>DependencyLibrary[LibraryName:spring-cloud-config-client]</GeneratingPSM>
+          <GeneratingPSM>ConfigurationProperty[FullyQualifiedPropertyName:spring.cloud.config.uri]</GeneratingPSM>
+        </components>
+        <components Category="Client_Resiliency_Pattern_Circuit_Breaker" Technology="Hystrix" Environment="COMPILE">
+          <GeneratingPSM>DependencyLibrary[LibraryName:spring-cloud-starter-hystrix]</GeneratingPSM>
+        </components>
+        <components Category="Observability_Pattern_Circuit_Breaker_Metrics_Generation" Technology="Hystrix" Environment="COMPILE">
+          <GeneratingPSM>DependencyLibrary[LibraryName:spring-cloud-starter-hystrix]</GeneratingPSM>
+        </components>
+        <components Category="Observability_Pattern_Circuit_Breaker_Metrics_Aggregation" Technology="Turbine" Environment="COMPILE">
+          <GeneratingPSM>DependencyLibrary[LibraryName:spring-cloud-starter-turbine]</GeneratingPSM>
+        </components>
+        <components xsi:type="PIM:InfrastructureClientComponent" Category="Development_Pattern_Data_Persistence" Technology="MySQL" Environment="COMPILE">
+          <GeneratingPSM>DependencyLibrary[LibraryName:mysql-connector-java]</GeneratingPSM>
+        </components>
+        <components xsi:type="PIM:InfrastructureServerComponent" Technology="Zuul" Environment="COMPILE">
+          <GeneratingPSM>DependencyLibrary[LibraryName:spring-cloud-starter-zuul]</GeneratingPSM>
+          <GeneratingPSM>JavaAnnotation[AnnotationName:EnableZuulProxy]</GeneratingPSM>
+        </components>
+        <components xsi:type="PIM:InfrastructureClientComponent" Category="Security_Pattern_Authorization_and_Authentication" Technology="Spring Cloud OAuth2" Environment="COMPILE">
+          <GeneratingPSM>JavaAnnotation[AnnotationName:EnableResourceServer]</GeneratingPSM>
+        </components>
+        <interface ServerURL="[http|https]://api-gateway:&lt;port-number>">
+          <destinations xsi:type="PIM:Endpoint" Environment="COMPILE" RequestURI="GET /actuator/env">
+            <GeneratingPSM>DependencyLibrary[LibraryName:spring-boot-starter-actuator]</GeneratingPSM>
+          </destinations>
+          <destinations xsi:type="PIM:Endpoint" Environment="COMPILE" RequestURI="GET /actuator/logfile">
+            <GeneratingPSM>DependencyLibrary[LibraryName:spring-boot-starter-actuator]</GeneratingPSM>
+          </destinations>
+          <destinations xsi:type="PIM:Endpoint" Environment="COMPILE" RequestURI="GET /actuator/health">
+            <messages MessageType="RESPONSE" BodySchema="{&quot;type&quot;:&quot;object&quot;,&quot;properties&quot;:{&quot;status&quot;:{&quot;type&quot;:&quot;string&quot;},&quot;details&quot;:{&quot;type&quot;:&quot;object&quot;}}}" SchemaFormat="JSON">
+              <GeneratingPSM>DependencyLibrary[LibraryName:spring-boot-starter-actuator]</GeneratingPSM>
+            </messages>
+            <GeneratingPSM>DependencyLibrary[LibraryName:spring-boot-starter-actuator]</GeneratingPSM>
+          </destinations>
+          <destinations xsi:type="PIM:Endpoint" Environment="COMPILE" RequestURI="GET /actuator/info">
+            <messages MessageType="RESPONSE" BodySchema="{&quot;type&quot;:&quot;object&quot;,&quot;properties&quot;:{&quot;git&quot;:{&quot;type&quot;:&quot;object&quot;,&quot;properties&quot;:{&quot;branch&quot;:{&quot;type&quot;:&quot;string&quot;},&quot;commit&quot;:{&quot;type&quot;:&quot;type&quot;:&quot;object&quot;,&quot;properties&quot;:{&quot;time&quot;:{&quot;type&quot;:&quot;object&quot;},&quot;id&quot;:{&quot;type&quot;:&quot;string&quot;}}}}},&quot;build&quot;:{&quot;type&quot;:&quot;object&quot;,&quot;properties&quot;:{&quot;artifact&quot;:{&quot;type&quot;:&quot;string&quot;},&quot;group&quot;:{&quot;type&quot;:&quot;string&quot;},&quot;name&quot;:{&quot;type&quot;:&quot;string&quot;},&quot;version&quot;:{&quot;type&quot;:&quot;string&quot;},&quot;time&quot;:{&quot;type&quot;:&quot;object&quot;}}}}}" SchemaFormat="JSON">
+              <GeneratingPSM>DependencyLibrary[LibraryName:spring-boot-starter-actuator]</GeneratingPSM>
+            </messages>
+            <GeneratingPSM>DependencyLibrary[LibraryName:spring-boot-starter-actuator]</GeneratingPSM>
+          </destinations>
+          <destinations xsi:type="PIM:Endpoint" Environment="COMPILE" RequestURI="GET /actuator/metrics">
+            <messages MessageType="RESPONSE" BodySchema="{&quot;type&quot;:&quot;object&quot;,&quot;properties&quot;:{&quot;Datacenter&quot;:{&quot;type&quot;:&quot;string&quot;},&quot;ID&quot;:{&quot;type&quot;:&quot;string&quot;},&quot;Node&quot;:{&quot;type&quot;:&quot;string&quot;},&quot;Address&quot;:{&quot;type&quot;:&quot;string&quot;},&quot;TaggedAddresses&quot;:{&quot;type&quot;:&quot;object&quot;,&quot;properties&quot;:{&quot;lan&quot;:{&quot;type&quot;:&quot;string&quot;},&quot;wan&quot;:{&quot;type&quot;:&quot;string&quot;}}},&quot;NodeMeta&quot;:{&quot;type&quot;:&quot;object&quot;,&quot;properties&quot;:{&quot;somekey&quot;:{&quot;type&quot;:&quot;string&quot;}}},&quot;Service&quot;:{&quot;type&quot;:&quot;object&quot;,&quot;properties&quot;:{&quot;ID&quot;:{&quot;type&quot;:&quot;string&quot;},&quot;Service&quot;:{&quot;type&quot;:&quot;string&quot;},&quot;Tags&quot;:{&quot;type&quot;:&quot;array&quot;,&quot;items&quot;:{&quot;type&quot;:&quot;string&quot;}},&quot;Address&quot;:{&quot;type&quot;:&quot;string&quot;},&quot;TaggedAddresses&quot;:{&quot;type&quot;:&quot;object&quot;,&quot;properties&quot;:{&quot;lan&quot;:{&quot;type&quot;:&quot;object&quot;,&quot;properties&quot;:{&quot;address&quot;:{&quot;type&quot;:&quot;string&quot;},&quot;port&quot;:{&quot;type&quot;:&quot;integer&quot;}}},&quot;wan&quot;:{&quot;type&quot;:&quot;object&quot;,&quot;properties&quot;:{&quot;address&quot;:{&quot;type&quot;:&quot;string&quot;},&quot;port&quot;:{&quot;type&quot;:&quot;integer&quot;}}}}},&quot;Meta&quot;:{&quot;type&quot;:&quot;object&quot;},&quot;Port&quot;:{&quot;type&quot;:&quot;integer&quot;}}},&quot;Check&quot;:{&quot;type&quot;:&quot;object&quot;},&quot;SkipNodeUpdate&quot;:{&quot;type&quot;:&quot;boolean&quot;}}}" SchemaFormat="JSON">
+              <GeneratingPSM>DependencyLibrary[LibraryName:spring-boot-starter-actuator]</GeneratingPSM>
+            </messages>
+            <GeneratingPSM>DependencyLibrary[LibraryName:spring-boot-starter-actuator]</GeneratingPSM>
+          </destinations>
+          <destinations xsi:type="PIM:Endpoint" Environment="COMPILE" RequestURI="POST /actuator/shutdown">
+            <messages MessageType="RESPONSE" BodySchema="{&quot;type&quot;:&quot;object&quot;,&quot;properties&quot;:{&quot;message&quot;:{&quot;type&quot;:&quot;string&quot;}}}" SchemaFormat="JSON">
+              <GeneratingPSM>DependencyLibrary[LibraryName:spring-boot-starter-actuator]</GeneratingPSM>
+            </messages>
+            <GeneratingPSM>DependencyLibrary[LibraryName:spring-boot-starter-actuator]</GeneratingPSM>
+          </destinations>
+          <destinations xsi:type="PIM:Endpoint" Environment="DOCKER" RequestURI="POST /actuator/refresh">
+            <GeneratingPSM>DependencyLibrary[LibraryName:spring-cloud-config-client]</GeneratingPSM>
+            <GeneratingPSM>ConfigurationProperty[FullyQualifiedPropertyName:spring.cloud.config.uri]</GeneratingPSM>
+          </destinations>
+          <destinations xsi:type="PIM:Endpoint" Environment="COMPILE" RequestURI="GET /actuator/hystrix.stream">
+            <GeneratingPSM>DependencyLibrary[LibraryName:spring-cloud-starter-hystrix]</GeneratingPSM>
+          </destinations>
+          <destinations xsi:type="PIM:Endpoint" Environment="COMPILE" RequestURI="GET /clusters">
+            <GeneratingPSM>DependencyLibrary[LibraryName:spring-cloud-starter-turbine]</GeneratingPSM>
+          </destinations>
+          <destinations xsi:type="PIM:Endpoint" Environment="COMPILE" RequestURI="GET /turbine.stream">
+            <GeneratingPSM>DependencyLibrary[LibraryName:spring-cloud-starter-turbine]</GeneratingPSM>
+          </destinations>
+          <destinations xsi:type="PIM:Endpoint" Environment="COMPILE" RequestURI="GET /routes">
+            <GeneratingPSM>DependencyLibrary[LibraryName:spring-cloud-starter-zuul]</GeneratingPSM>
+            <GeneratingPSM>JavaAnnotation[AnnotationName:EnableZuulProxy]</GeneratingPSM>
+          </destinations>
+          <destinations xsi:type="PIM:Endpoint" Environment="COMPILE" RequestURI="GET /filters">
+            <GeneratingPSM>DependencyLibrary[LibraryName:spring-cloud-starter-zuul]</GeneratingPSM>
+            <GeneratingPSM>JavaAnnotation[AnnotationName:EnableZuulProxy]</GeneratingPSM>
+          </destinations>
+          <GeneratingPSM>DockerContainerDefinition[ContainerName:api-gateway,ImageField:idugalic/api-gateway, GeneratesLogs:false]</GeneratingPSM>
+          <GeneratingPSM>MicroserviceProject[ProjectArtifactId:api-gateway]</GeneratingPSM>
+        </interface>
+        <dependencies ProviderName="configserver" ProviderDestination="Endpoint[RequestURI:GET /api-gateway/default]" Environment="DOCKER">
+          <GeneratingPSM>ConfigurationProperty[FullyQualifiedPropertyName:spring.cloud.config.uri]</GeneratingPSM>
+        </dependencies>
+        <dependencies ProviderName="api-gateway" ProviderDestination="Endpoint[RequestURI:GET /actuator/hystrix.stream]" Environment="COMPILE">
+          <GeneratingPSM>DockerContainerDefinition[ContainerName:api-gateway,ImageField:idugalic/api-gateway, GeneratesLogs:false]</GeneratingPSM>
+          <GeneratingPSM>MicroserviceProject[ProjectArtifactId:api-gateway]</GeneratingPSM>
+        </dependencies>
+        <GeneratingPSM>DockerContainerDefinition[ContainerName:api-gateway,ImageField:idugalic/api-gateway, GeneratesLogs:false]</GeneratingPSM>
+        <GeneratingPSM>MicroserviceProject[ProjectArtifactId:api-gateway]</GeneratingPSM>
+      </microservices>
+      <GeneratingPSM>DistributedApplicationProject[ApplicationName:micro company]</GeneratingPSM>
+      <GeneratingPSM>ApplicationProject[ProjectArtifactId:microservices-company-parent]</GeneratingPSM>
+    </architecture>
+  </PIM:RootPIM>
+  <PIM:Microservice MicroserviceName="configserver">
+    <GeneratingPSM>DockerContainerDefinition[ContainerName:configserver,ImageField:idugalic/configserver, GeneratesLogs:false]</GeneratingPSM>
+    <GeneratingPSM>MicroserviceProject[ProjectArtifactId:configserver]</GeneratingPSM>
+  </PIM:Microservice>
+  <PIM:Microservice MicroserviceName="registry">
+    <GeneratingPSM>DockerContainerDefinition[ContainerName:registry,ImageField:idugalic/registry, GeneratesLogs:false]</GeneratingPSM>
+    <GeneratingPSM>MicroserviceProject[ProjectArtifactId:registry]</GeneratingPSM>
+  </PIM:Microservice>
+  <PIM:Microservice MicroserviceName="authserver">
+    <GeneratingPSM>DockerContainerDefinition[ContainerName:authserver,ImageField:idugalic/authserver, GeneratesLogs:false]</GeneratingPSM>
+    <GeneratingPSM>MicroserviceProject[ProjectArtifactId:authserver]</GeneratingPSM>
+  </PIM:Microservice>
+  <PIM:Microservice MicroserviceName="adminserver">
+    <GeneratingPSM>DockerContainerDefinition[ContainerName:adminserver,ImageField:idugalic/adminserver, GeneratesLogs:false]</GeneratingPSM>
+    <GeneratingPSM>MicroserviceProject[ProjectArtifactId:adminserver]</GeneratingPSM>
+  </PIM:Microservice>
+  <PIM:Microservice MicroserviceName="circuit-breaker">
+    <GeneratingPSM>DockerContainerDefinition[ContainerName:circuit-breaker,ImageField:idugalic/circuit-breaker, GeneratesLogs:false]</GeneratingPSM>
+    <GeneratingPSM>MicroserviceProject[ProjectArtifactId:circuit-breaker]</GeneratingPSM>
+  </PIM:Microservice>
+  <PIM:Microservice MicroserviceName="query-side-blog">
+    <GeneratingPSM>DockerContainerDefinition[ContainerName:query-side-blog,ImageField:idugalic/query-side-blog-service, GeneratesLogs:false]</GeneratingPSM>
+    <GeneratingPSM>MicroserviceProject[ProjectArtifactId:query-side-blog]</GeneratingPSM>
+  </PIM:Microservice>
+  <PIM:Microservice MicroserviceName="command-side-blog">
+    <GeneratingPSM>DockerContainerDefinition[ContainerName:command-side-blog,ImageField:idugalic/command-side-blog-service, GeneratesLogs:false]</GeneratingPSM>
+    <GeneratingPSM>MicroserviceProject[ProjectArtifactId:command-side-blog]</GeneratingPSM>
+  </PIM:Microservice>
+  <PIM:Microservice MicroserviceName="query-side-project">
+    <GeneratingPSM>DockerContainerDefinition[ContainerName:query-side-project,ImageField:idugalic/query-side-project-service, GeneratesLogs:false]</GeneratingPSM>
+    <GeneratingPSM>MicroserviceProject[ProjectArtifactId:query-side-project]</GeneratingPSM>
+  </PIM:Microservice>
+  <PIM:Microservice MicroserviceName="command-side-project">
+    <GeneratingPSM>DockerContainerDefinition[ContainerName:command-side-project,ImageField:idugalic/command-side-project-service, GeneratesLogs:false]</GeneratingPSM>
+    <GeneratingPSM>MicroserviceProject[ProjectArtifactId:command-side-project]</GeneratingPSM>
+  </PIM:Microservice>
+  <PIM:Microservice MicroserviceName="api-gateway">
+    <GeneratingPSM>DockerContainerDefinition[ContainerName:api-gateway,ImageField:idugalic/api-gateway, GeneratesLogs:false]</GeneratingPSM>
+    <GeneratingPSM>MicroserviceProject[ProjectArtifactId:api-gateway]</GeneratingPSM>
+  </PIM:Microservice>
+</xmi:XMI>
