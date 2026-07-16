@@ -5,7 +5,7 @@
 [![Research Software](https://img.shields.io/badge/type-research%20software-6f42c1)](https://github.com/MicroServiceArchitectureRecovery/misar)
 [![YouTube Demonstration](https://img.shields.io/badge/video-demonstration-red?logo=youtube&logoColor=white)](https://www.youtube.com/watch?v=sdRDkLesyS0)
 
-MiSAR is a research-driven approach for the semi-automatic recovery of architectural models from implemented microservice systems. It follows Model-Driven Architecture principles to derive progressively more abstract representations of a system, from implementation artefacts to architectural models and visual outputs.
+MiSAR is an approach and toolset for the semi-automatic recovery of architectural models from implemented microservice systems. It follows Model-Driven Architecture principles to derive progressively more abstract representations of a system, from implementation artefacts to architectural models and visual outputs.
 
 ## MiSAR workflow
 
@@ -22,14 +22,14 @@ flowchart LR
     F --> J[SVG and UML-style outputs]
 ```
 
-The recovered **Platform Independent Model** represents the architecture of the analysed microservice system independently of its implementation platform.
+The recovered **Platform Independent Model** represents the architecture of the analysed microservice system independently of its implementation platforms and lanuages.
 
 ## Repositories
 
 | Repository                                                                                                                                   | Role                                                                                                                                                                      |
 |----------------------------------------------------------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | **[MiSAR Parser, Transformation Engine and AIO](https://github.com/MicroServiceArchitectureRecovery/MiSAR-Parser-and-Model-Transformation)** | The operational core of MiSAR. It contains the All-in-One launcher, the parser, the PSM metamodel, the transformation resources, and the maintained documentation source. |
-| **[MiSAR Graphical Model Generator](https://github.com/MicroServiceArchitectureRecovery/misar-plantUML)**                                    | Converts a MiSAR PIM into visual and tabular outputs, including architecture views, dependency views, SVG diagrams, and Excel summaries.                                  |
+| **[MiSAR Graphical Model Generator](https://github.com/MicroServiceArchitectureRecovery/misar-plantUML)**                                    | Converts a MiSAR PIM into visual and tabular outputs, including architecture views, dependency views, SVG diagrams, and quantitative Excel summaries.                                  |
 | **[MiSAR overview](https://github.com/MicroServiceArchitectureRecovery/misar)**                                                              | Provides a concise project-level entry point and links the MiSAR repositories together.                                                                                   |
 
 ## Demonstration
