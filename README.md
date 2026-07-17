@@ -9,17 +9,32 @@ MiSAR is a research-driven approach for the semi-automatic recovery of architect
 
 ## MiSAR workflow
 
+
 ```mermaid
 flowchart LR
-    A[Microservice source code<br/>and configuration] --> B[MiSAR Parser]
-    B --> C[Platform Specific Model<br/>PSM]
-    C --> D[QVTo Transformation Engine]
-    D --> E[Platform Independent Model<br/>PIM]
-    E --> F[Graphical Model Generator<br/>GMG]
-    F --> G[Architecture views]
-    F --> H[Dependency views]
-    F --> I[Excel summaries]
-    F --> J[SVG and UML-style outputs]
+    INPUT[/Input:<br/>Source code, build files<br/>and configuration files/]
+    PARSER[Tool:<br/>MiSAR Parser]
+    PSM([Output:<br/>Platform Specific Model<br/>PSM])
+    QVTO[Tool:<br/>Eclipse, QVTo and EMF]
+    PIM([Output:<br/>Platform Independent Model<br/>PIM])
+    GMG[Tool:<br/>MiSAR Graphical Model Generator]
+    ARCH([Output:<br/>Architecture views])
+    DEP([Output:<br/>Dependency views])
+    XLS([Output:<br/>Excel summaries])
+    FORMATS{{View representations and formats:<br/>PNG, SVG, PlantUML source<br/>and UML-style diagrams}}
+
+    INPUT --> PARSER
+    PARSER --> PSM
+    PSM --> QVTO
+    QVTO --> PIM
+    PIM --> GMG
+
+    GMG --> ARCH
+    GMG --> DEP
+    GMG --> XLS
+
+    ARCH -.-> FORMATS
+    DEP -.-> FORMATS
 ```
 
 The recovered **Platform Independent Model** represents the architecture of the analysed microservice system independently of its implementation platform.
